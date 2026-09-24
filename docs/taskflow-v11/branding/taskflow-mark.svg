@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+<title id="title">TaskFlow — sygnet</title><desc id="desc">Pomarańczowy zaokrąglony kwadrat z białym znakiem ukończenia zadania.</desc>
+<rect x="4" y="4" width="120" height="120" rx="29" fill="#F97316"/>
+<path d="M31 65.5 52 86 97 40" fill="none" stroke="#FFFFFF" stroke-width="12.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
