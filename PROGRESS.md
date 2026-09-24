@@ -12,7 +12,8 @@
 | Jednostka | Weryfikacja | Commit | Push |
 | --- | --- | --- | --- |
 | Dokumenty wejściowe i punkt wznowienia | Stan Git, remote, CI i migracji sprawdzone | `d8a63db` | tak |
-| Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | commit w toku | nie |
+| Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | `e644923` | tak |
+| Synchronizacja kart po edycji oraz cofnięcie optymistycznego ruchu po błędzie | `lint`, `typecheck`, 15 unit, `build`, 2 E2E (edycja i rollback) OK; istniejący DnD po seedzie OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -24,21 +25,21 @@
 - `pnpm typecheck`: OK podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm test`: 15/15 podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm build`: OK podczas planowania, wymaga ponowienia po zmianach.
-- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone. Jeden osobny bieg DnD nie przeszedł; trwa analiza stabilności scenariusza.
+- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone; Kanban: 2 zaliczone po poprawce; istniejący DnD: 1 zaliczony po ponownym seedzie. Jeden wcześniejszy osobny bieg DnD był niestabilny.
 - Sekrety: `.env.local` pozostaje lokalny i ignorowany przez Git.
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: opublikowanie pakietu v1.1 i punktu wznowienia.
-- Bieżąca jednostka: formularze, testy regresyjne i publikacja poprawki.
-- Następny krok w tym samym etapie: diagnoza DnD, spójności kart i współbieżności, następnie audyt uprawnień i rate limitu.
+- Ostatnia ukończona mała jednostka: formularze (`e644923`).
+- Bieżąca jednostka: synchronizacja Kanbanu i publikacja poprawki.
+- Następny krok w tym samym etapie: transakcyjna obsługa konfliktów kolejności i testy równoczesnych ruchów, następnie audyt uprawnień i rate limitu.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `d8a63db` opublikowany; następna poprawka w toku.
-- Czy drzewo robocze jest czyste? Nie — w toku poprawka formularzy.
+- Ostatni commit / wynik pushu: `e644923` opublikowany; następna poprawka w toku.
+- Czy drzewo robocze jest czyste? Nie — w toku poprawka Kanbanu.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

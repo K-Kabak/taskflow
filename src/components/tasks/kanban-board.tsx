@@ -17,17 +17,18 @@ const columns = [{ id: "TODO" as const, title: "Do zrobienia" }, { id: "IN_PROGR
 const priorities = { LOW: "Niski", MEDIUM: "Średni", HIGH: "Wysoki", URGENT: "Pilny" };
 
 export function KanbanBoard({ workspaceId, projectId, initialTasks, readOnly = false }: { workspaceId: string; projectId: string; initialTasks: BoardTask[]; readOnly?: boolean }) {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [optimisticTasks, setOptimisticTasks] = useState<BoardTask[] | null>(null);
+  const [saving, setSaving] = useState(false);
+  const tasks = optimisticTasks ?? initialTasks;
   const [activeId, setActiveId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
   const activeTask = tasks.find((task) => task.id === activeId);
   const grouped = useMemo(() => Object.fromEntries(columns.map((column) => [column.id, tasks.filter((task) => task.status === column.id)])) as Record<BoardTask["status"], BoardTask[]>, [tasks]);
 
-  function onStart(event: DragStartEvent) { if (!readOnly) setActiveId(String(event.active.id)); }
+  function onStart(event: DragStartEvent) { if (!readOnly && !saving) setActiveId(String(event.active.id)); }
   async function onEnd(event: DragEndEvent) {
-    setActiveId(null); if (!event.over || readOnly) return;
-    const before = tasks;
+    setActiveId(null); if (!event.over || readOnly || saving) return;
     const moving = tasks.find((task) => task.id === event.active.id); if (!moving) return;
     const overTask = tasks.find((task) => task.id === event.over?.id);
     const targetStatus = (overTask?.status || event.over.id) as BoardTask["status"];
@@ -42,13 +43,20 @@ export function KanbanBoard({ workspaceId, projectId, initialTasks, readOnly = f
       const source = grouped[targetStatus]; const oldIndex = source.findIndex((t) => t.id === moving.id); const newIndex = overTask ? source.findIndex((t) => t.id === overTask.id) : source.length - 1;
       const reordered = arrayMove(source, oldIndex, newIndex); next = [...tasks.filter((t) => t.status !== targetStatus), ...reordered];
     }
-    setTasks(next); setMessage(null);
-    const result = await moveTaskAction(workspaceId, { taskId: moving.id, targetStatus, targetIndex });
-    if (!result.ok) { setTasks(before); setMessage(result.message); }
+    setOptimisticTasks(next); setMessage(null); setSaving(true);
+    try {
+      const result = await moveTaskAction(workspaceId, { taskId: moving.id, targetStatus, targetIndex });
+      if (!result.ok) setMessage(result.message);
+    } catch {
+      setMessage("Nie udało się zapisać kolejności. Przywrócono poprzedni układ.");
+    } finally {
+      setOptimisticTasks(null);
+      setSaving(false);
+    }
   }
 
   return <><DndContext id={`kanban-${projectId}`} sensors={sensors} collisionDetection={closestCorners} onDragStart={onStart} onDragEnd={onEnd}>
-    <div className="flex min-w-max gap-4 pb-4 xl:grid xl:min-w-0 xl:grid-cols-3">{columns.map((column) => <KanbanColumn key={column.id} column={column} tasks={grouped[column.id]} workspaceId={workspaceId} projectId={projectId} readOnly={readOnly} />)}</div>
+    <div className="flex min-w-max gap-4 pb-4 xl:grid xl:min-w-0 xl:grid-cols-3">{columns.map((column) => <KanbanColumn key={column.id} column={column} tasks={grouped[column.id]} workspaceId={workspaceId} projectId={projectId} readOnly={readOnly || saving} />)}</div>
     <DragOverlay>{activeTask ? <TaskCard task={activeTask} workspaceId={workspaceId} projectId={projectId} overlay /> : null}</DragOverlay>
   </DndContext>{message && <p role="alert" className="fixed right-5 bottom-5 z-50 rounded-xl bg-red-600 px-4 py-3 text-sm text-white shadow-xl">{message}</p>}</>;
 }

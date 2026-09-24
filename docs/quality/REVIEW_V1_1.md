@@ -9,7 +9,7 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | Waga | Problem i reprodukcja | Oczekiwane / rzeczywiste zachowanie | Lokalizacja | Test i wynik |
 | --- | --- | --- | --- | --- |
 | Średnia | Wyślij nazwę projektu lub tytuł zadania z samych spacji. | Użytkownik ma otrzymać błąd pola; akcja wcześniej wykonywała ciche `return`. | `src/app/actions/domain.ts` oraz formularze | `e2e/forms.spec.ts`: 2 testy zaliczone; poprawka: commit formularzy. |
-| Średnia | Zmień tytuł, termin, etykiety lub przypisanych w panelu zadania bez zmiany statusu i wróć na tablicę. | Karta ma od razu pokazać zapisane dane; obecny stan `useState(initialTasks)` i klucz ID/status mogą zachować stare dane. | `src/components/tasks/kanban-board.tsx`, widok projektu | Do potwierdzenia E2E i naprawy. |
+| Średnia | Zmień tytuł, termin i priorytet w panelu zadania bez zmiany statusu, potem wróć na tablicę. | Karta powinna od razu pokazać nowe dane; pozostawała ze starym tytułem, bo lokalny stan był inicjowany raz. | `src/components/tasks/kanban-board.tsx`, widok projektu | `e2e/kanban-state.spec.ts`: test najpierw nie przeszedł, po poprawce przeszedł. |
 
 ## Ryzyka wymagające reprodukcji
 
