@@ -1,0 +1,68 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: taskflow_test
+          POSTGRES_USER: taskflow
+          POSTGRES_PASSWORD: taskflow_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U taskflow -d taskflow_test"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://taskflow:taskflow_test@localhost:5432/taskflow_test?schema=public
+      NEXTAUTH_SECRET: ci-only-secret-not-used-in-production-123456
+      NEXTAUTH_URL: http://localhost:3000
+      RATE_LIMIT_SECRET: ci-rate-limit-secret-123456789
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 12.1.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate
+      - run: pnpm prisma migrate deploy
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: quality
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: taskflow_e2e
+          POSTGRES_USER: taskflow
+          POSTGRES_PASSWORD: taskflow_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U taskflow -d taskflow_e2e"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://taskflow:taskflow_test@localhost:5432/taskflow_e2e?schema=public
+      NEXTAUTH_SECRET: ci-only-secret-not-used-in-production-123456
+      NEXTAUTH_URL: http://localhost:3000
+      RATE_LIMIT_SECRET: ci-rate-limit-secret-123456789
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 12.1.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm prisma generate && pnpm prisma migrate deploy && pnpm prisma db seed
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test --project=chromium

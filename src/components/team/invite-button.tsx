@@ -1,0 +1,6 @@
+"use client";
+import { useState } from "react";
+import { Check, Copy, Link2, Loader2 } from "lucide-react";
+import { createInviteAction } from "@/app/actions/domain";
+
+export function InviteButton({ workspaceId }: { workspaceId: string }) { const [url,setUrl]=useState<string|null>(null); const [pending,setPending]=useState(false); const [copied,setCopied]=useState(false); async function create(){setPending(true);const result=await createInviteAction(workspaceId);setPending(false);if(result.ok)setUrl(result.data.url);} async function copy(){if(url){await navigator.clipboard.writeText(url);setCopied(true);}} return <div className="flex flex-wrap items-center gap-2">{url && <input readOnly value={url} className="min-w-64 flex-1 rounded-xl border border-[#deded9] bg-white px-3 py-2 text-sm" />}{url ? <button onClick={copy} className="flex items-center gap-2 rounded-xl bg-[#252525] px-4 py-2 text-sm font-semibold text-white">{copied?<Check size={16}/>:<Copy size={16}/>}Kopiuj</button>:<button onClick={create} disabled={pending} className="flex items-center gap-2 rounded-xl bg-orange-500 px-4 py-2.5 font-semibold text-white">{pending?<Loader2 className="animate-spin" size={17}/>:<Link2 size={17}/>}Generuj link</button>}</div>; }
