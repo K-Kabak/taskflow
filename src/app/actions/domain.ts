@@ -4,7 +4,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireProjectAccess, requireTaskAccess, requireWorkspaceMember, requireWorkspaceRole } from "@/lib/permissions";
+import { DomainError, requireProjectAccess, requireTaskAccess, requireWorkspaceMember, requireWorkspaceRole } from "@/lib/permissions";
 import { commentSchema, labelSchema, linkSchema, moveTaskSchema, projectSchema, roleSchema, taskSchema, workspaceSchema } from "@/lib/validations";
 import { parseDateOnly } from "@/lib/date-only";
 import { consumeRateLimit } from "@/lib/rate-limit";
@@ -21,6 +21,24 @@ function sameIds(actual: { id: string }[], expected: string[]) {
 
 function isSerializationConflict(error: unknown) {
   return typeof error === "object" && error !== null && "code" in error && error.code === "P2034";
+}
+
+async function writableTaskOrError(workspaceId: string, taskId: string) {
+  try {
+    return await requireTaskAccess(workspaceId, taskId, { writable: true });
+  } catch (error) {
+    if (error instanceof DomainError) return actionError(error.code, error.message);
+    throw error;
+  }
+}
+
+async function writableProjectOrError(workspaceId: string, projectId: string) {
+  try {
+    return await requireProjectAccess(workspaceId, projectId, { writable: true });
+  } catch (error) {
+    if (error instanceof DomainError) return actionError(error.code, error.message);
+    throw error;
+  }
 }
 
 export async function createProjectAction(workspaceId: string, formData: FormData) {
@@ -54,7 +72,9 @@ export async function setProjectArchivedAction(workspaceId: string, projectId: s
 }
 
 export async function createTaskAction(workspaceId: string, projectId: string, status: string, formData: FormData) {
-  const { session } = await requireProjectAccess(workspaceId, projectId, { writable: true });
+  const access = await writableProjectOrError(workspaceId, projectId);
+  if ("ok" in access) return access;
+  const { session } = access;
   const parsed = taskSchema.pick({ title: true, priority: true, dueDate: true }).safeParse({ title: formData.get("title"), priority: formData.get("priority") || "MEDIUM", dueDate: formData.get("dueDate") || "" });
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane zadania.", parsed.error.flatten().fieldErrors);
   if (status !== "TODO" && status !== "IN_PROGRESS" && status !== "DONE") return actionError("VALIDATION_ERROR", "Nieprawidłowy status zadania.");
@@ -69,24 +89,28 @@ export async function createTaskAction(workspaceId: string, projectId: string, s
 }
 
 export async function updateTaskAction(workspaceId: string, taskId: string, formData: FormData) {
-  const { session, task } = await requireTaskAccess(workspaceId, taskId, { writable: true });
+  const access = await writableTaskOrError(workspaceId, taskId);
+  if ("ok" in access) return access;
+  const { session, task } = access;
   const parsed = taskSchema.safeParse({
     title: formData.get("title"), description: formData.get("description"), status: formData.get("status"), priority: formData.get("priority"), dueDate: formData.get("dueDate"), assigneeIds: formData.getAll("assigneeIds"), labelIds: formData.getAll("labelIds"),
   });
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane zadania.", parsed.error.flatten().fieldErrors);
+  const assigneeIds = [...new Set(parsed.data.assigneeIds)];
+  const labelIds = [...new Set(parsed.data.labelIds)];
   const [members, labels] = await Promise.all([
-    db.workspaceMember.count({ where: { workspaceId, userId: { in: parsed.data.assigneeIds } } }),
-    db.label.count({ where: { workspaceId, id: { in: parsed.data.labelIds } } }),
+    db.workspaceMember.count({ where: { workspaceId, userId: { in: assigneeIds } } }),
+    db.label.count({ where: { workspaceId, id: { in: labelIds } } }),
   ]);
-  if (members !== new Set(parsed.data.assigneeIds).size || labels !== new Set(parsed.data.labelIds).size) return actionError("VALIDATION_ERROR", "Wybierz członków i etykiety z bieżącej przestrzeni.");
+  if (members !== assigneeIds.length || labels !== labelIds.length) return actionError("VALIDATION_ERROR", "Wybierz członków i etykiety z bieżącej przestrzeni.");
   const previousAssignees = await db.taskAssignee.findMany({ where: { taskId }, select: { userId: true } });
-  const assigneesChanged = previousAssignees.map((item) => item.userId).sort().join("|") !== [...parsed.data.assigneeIds].sort().join("|");
+  const assigneesChanged = previousAssignees.map((item) => item.userId).sort().join("|") !== [...assigneeIds].sort().join("|");
 
   await db.$transaction(async (tx) => {
     const targetLast = task.status === parsed.data.status ? null : await tx.task.aggregate({ where: { projectId: task.projectId, status: parsed.data.status }, _max: { position: true } });
-    await tx.task.update({ where: { id: taskId }, data: { title: parsed.data.title, description: parsed.data.description, status: parsed.data.status, position: targetLast ? (targetLast._max.position ?? 0) + 1000 : undefined, priority: parsed.data.priority, dueDate: parseDateOnly(parsed.data.dueDate), assignees: { deleteMany: {}, create: parsed.data.assigneeIds.map((userId) => ({ userId })) }, labels: { deleteMany: {}, create: parsed.data.labelIds.map((labelId) => ({ labelId })) } } });
+    await tx.task.update({ where: { id: taskId }, data: { title: parsed.data.title, description: parsed.data.description, status: parsed.data.status, position: targetLast ? (targetLast._max.position ?? 0) + 1000 : undefined, priority: parsed.data.priority, dueDate: parseDateOnly(parsed.data.dueDate), assignees: { deleteMany: {}, create: assigneeIds.map((userId) => ({ userId })) }, labels: { deleteMany: {}, create: labelIds.map((labelId) => ({ labelId })) } } });
     await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: task.status === parsed.data.status ? "TASK_UPDATED" : "TASK_STATUS_CHANGED", metadataJson: { title: parsed.data.title, from: task.status, to: parsed.data.status } } });
-    if (assigneesChanged) await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "TASK_ASSIGNEES_CHANGED", metadataJson: { assigneeIds: parsed.data.assigneeIds } } });
+    if (assigneesChanged) await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "TASK_ASSIGNEES_CHANGED", metadataJson: { assigneeIds } } });
   });
   revalidatePath(workspacePath(workspaceId));
   return { ok: true, data: undefined } as const;
@@ -102,7 +126,9 @@ export async function deleteTaskAction(workspaceId: string, taskId: string) {
 export async function moveTaskAction(workspaceId: string, input: unknown): Promise<ActionResult> {
   const parsed = moveTaskSchema.safeParse(input);
   if (!parsed.success) return { ok: false, code: "VALIDATION_ERROR", message: "Nieprawidłowe położenie zadania." };
-  const { session, task } = await requireTaskAccess(workspaceId, parsed.data.taskId, { writable: true });
+  const access = await writableTaskOrError(workspaceId, parsed.data.taskId);
+  if ("ok" in access) return access;
+  const { session, task } = access;
   const boardPath = `/w/${workspaceId}/projects/${task.projectId}`;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -148,7 +174,9 @@ export async function createLabelAction(workspaceId: string, formData: FormData)
 }
 
 export async function addCommentAction(workspaceId: string, taskId: string, formData: FormData) {
-  const { session, task } = await requireTaskAccess(workspaceId, taskId, { writable: true });
+  const access = await writableTaskOrError(workspaceId, taskId);
+  if ("ok" in access) return access;
+  const { session, task } = access;
   const parsed = commentSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw komentarz.", parsed.error.flatten().fieldErrors);
   await db.$transaction(async (tx) => {
@@ -160,7 +188,9 @@ export async function addCommentAction(workspaceId: string, taskId: string, form
 }
 
 export async function addLinkAction(workspaceId: string, taskId: string, formData: FormData) {
-  const { session, task } = await requireTaskAccess(workspaceId, taskId, { writable: true });
+  const access = await writableTaskOrError(workspaceId, taskId);
+  if ("ok" in access) return access;
+  const { session, task } = access;
   const parsed = linkSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane linku.", parsed.error.flatten().fieldErrors);
   await db.$transaction(async (tx) => {

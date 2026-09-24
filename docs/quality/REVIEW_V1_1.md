@@ -10,6 +10,8 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | --- | --- | --- | --- | --- |
 | Średnia | Wyślij nazwę projektu lub tytuł zadania z samych spacji. | Użytkownik ma otrzymać błąd pola; akcja wcześniej wykonywała ciche `return`. | `src/app/actions/domain.ts` oraz formularze | `e2e/forms.spec.ts`: 2 testy zaliczone; poprawka: commit formularzy. |
 | Średnia | Zmień tytuł, termin i priorytet w panelu zadania bez zmiany statusu, potem wróć na tablicę. | Karta powinna od razu pokazać nowe dane; pozostawała ze starym tytułem, bo lokalny stan był inicjowany raz. | `src/components/tasks/kanban-board.tsx`, widok projektu | `e2e/kanban-state.spec.ts`: test najpierw nie przeszedł, po poprawce przeszedł. |
+| Średnia | Dodaj ten sam identyfikator osoby dwa razy do formularza zadania. | Relacja powinna powstać raz; wcześniej weryfikacja unikalnych ID przechodziła, ale zapis próbował utworzyć duplikat klucza głównego. | `updateTaskAction` | `e2e/security.spec.ts`: zapis i odmowa obcej osoby/etykiety przechodzą. |
+| Niska | Otwórz zadanie, zarchiwizuj projekt w drugiej sesji i spróbuj zapisać edycję. | Zmiana musi być odmówiona z czytelnym komunikatem; wcześniej serwer rzucał oczekiwany błąd, a formularz pokazywał ogólny komunikat. | Akcje zapisu zadania i `requireTaskAccess` | `e2e/security.spec.ts`: zapis zablokowany, tytuł bez zmian. |
 
 ## Ryzyka wymagające reprodukcji
 
@@ -18,6 +20,10 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | Seryjne konflikty bazy przy jednoczesnym ruchu dwóch kart. | `moveTaskAction`: obsłużone ograniczonym ponowieniem transakcji `Serializable`; końcowe E2E obejmie dwie sesje i przestarzały układ. |
 | Poza Vercel nagłówek `x-forwarded-for` może być dostarczony przez klienta. | `consumeRateLimit`: identyfikator użytkownika ma niezależny limit poza Vercel; IP jest uwzględniany tylko w środowisku Vercel, które nadpisuje nagłówek. Podczas Etapu 4 potwierdzić rzeczywiste nagłówki wdrożenia. |
 | Typ `any` ukrywa błędy kontraktu danych panelu zadania. | Widok projektu i panel: zastąpić typem payloadu Prisma / jawnego DTO. |
+
+## Izolacja przestrzeni i role
+
+`e2e/security.spec.ts` sprawdza odmowę przypisania użytkownika i etykiety z innej przestrzeni, brak zarządzania projektami/rolami dla MEMBER, odmowę dostępu do obcego wyszukiwania, wygasłe zaproszenie i archiwum. Istniejące E2E sprawdzają obcy projekt oraz ponowne użycie zaproszenia. Potwierdzono brak zapisu obcych relacji w bazie.
 
 ## Kolejność kart
 

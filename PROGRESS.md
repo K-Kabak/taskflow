@@ -15,7 +15,8 @@
 | Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | `e644923` | tak |
 | Synchronizacja kart po edycji oraz cofnięcie optymistycznego ruchu po błędzie | `lint`, `typecheck`, 15 unit, `build`, 2 E2E (edycja i rollback) OK; istniejący DnD po seedzie OK | `2e603a9` | tak |
 | Spójna kolejność i odmowa nadpisania układu z drugiej sesji | `lint`, `typecheck`, 15 unit, 2 E2E kolejności, `build` OK | `06eb9da` | tak |
-| Atomowy rate limit i ignorowanie niezaufanego IP | `lint`, `typecheck`, 17 testów, `build`, 2 E2E auth OK | commit w toku | nie |
+| Atomowy rate limit i ignorowanie niezaufanego IP | `lint`, `typecheck`, 17 testów, `build`, 2 E2E auth OK | `a091ae0` | tak |
+| Walidacja zapisów zadania, duplikatów i obcych relacji | `lint`, `typecheck`, 17 testów, `build`, 6 E2E security OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -32,16 +33,16 @@
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: kolejność i konflikty (`06eb9da`).
-- Bieżąca jednostka: rate limit i publikacja poprawki.
-- Następny krok w tym samym etapie: testy uprawnień, przypisań i zaproszeń; usunięcie `any`; pełna weryfikacja.
+- Ostatnia ukończona mała jednostka: rate limit (`a091ae0`).
+- Bieżąca jednostka: walidacja zapisów zadania i negatywne E2E.
+- Następny krok w tym samym etapie: usunięcie `any`, przegląd pozostałych przepływów, pełna weryfikacja.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `06eb9da` opublikowany; następna poprawka w toku.
-- Czy drzewo robocze jest czyste? Nie — w toku poprawka rate limitu.
+- Ostatni commit / wynik pushu: `a091ae0` opublikowany; następna poprawka w toku.
+- Czy drzewo robocze jest czyste? Nie — w toku walidacja zapisów zadania.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.
