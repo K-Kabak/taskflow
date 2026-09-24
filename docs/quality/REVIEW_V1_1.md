@@ -15,9 +15,13 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 
 | Ryzyko | Miejsce i plan sprawdzenia |
 | --- | --- |
-| Równoczesne ruchy kart mogą zignorować zmianę innego klienta. | `moveTaskAction`: dwie sesje, ruchy w tej samej kolumnie, kontrola trwałego porządku. |
+| Seryjne konflikty bazy przy jednoczesnym ruchu dwóch kart. | `moveTaskAction`: obsłużone ograniczonym ponowieniem transakcji `Serializable`; końcowe E2E obejmie dwie sesje i przestarzały układ. |
 | Nagłówki `x-forwarded-for` i `x-real-ip` mogą mieć niepewne pochodzenie. | `consumeRateLimit`: sprawdzić model zaufania hostingu, testować współbieżne żądania i limit. |
 | Typ `any` ukrywa błędy kontraktu danych panelu zadania. | Widok projektu i panel: zastąpić typem payloadu Prisma / jawnego DTO. |
+
+## Kolejność kart
+
+Wcześniej UI liczył pozycję inaczej niż serwer przy ruchu w jednej kolumnie i nie przekazywał wersji układu. Teraz klient i serwer stosują pozycję po wyjęciu przesuwanej karty, a serwer porównuje pełne ID obu kolumn w transakcji. Nieaktualny układ jest odrzucany z odświeżeniem widoku. `e2e/kanban-order.spec.ts` sprawdza trwałość kolejności po przeładowaniu i odmowę nadpisania zmiany z drugiej sesji.
 
 ## Kontrole końcowe
 

@@ -50,6 +50,8 @@ export const moveTaskSchema = z.object({
   taskId: z.string().min(1),
   targetStatus: z.enum(["TODO", "IN_PROGRESS", "DONE"]),
   targetIndex: z.number().int().min(0),
+  expectedSourceIds: z.array(z.string().min(1)),
+  expectedTargetIds: z.array(z.string().min(1)),
 });
 
 export const roleSchema = z.object({ role: z.enum(["ADMIN", "MEMBER"]) });

@@ -13,7 +13,8 @@
 | --- | --- | --- | --- |
 | Dokumenty wejściowe i punkt wznowienia | Stan Git, remote, CI i migracji sprawdzone | `d8a63db` | tak |
 | Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | `e644923` | tak |
-| Synchronizacja kart po edycji oraz cofnięcie optymistycznego ruchu po błędzie | `lint`, `typecheck`, 15 unit, `build`, 2 E2E (edycja i rollback) OK; istniejący DnD po seedzie OK | commit w toku | nie |
+| Synchronizacja kart po edycji oraz cofnięcie optymistycznego ruchu po błędzie | `lint`, `typecheck`, 15 unit, `build`, 2 E2E (edycja i rollback) OK; istniejący DnD po seedzie OK | `2e603a9` | tak |
+| Spójna kolejność i odmowa nadpisania układu z drugiej sesji | `lint`, `typecheck`, 15 unit, 2 E2E kolejności OK; `build` do uruchomienia | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -25,21 +26,21 @@
 - `pnpm typecheck`: OK podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm test`: 15/15 podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm build`: OK podczas planowania, wymaga ponowienia po zmianach.
-- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone; Kanban: 2 zaliczone po poprawce; istniejący DnD: 1 zaliczony po ponownym seedzie. Jeden wcześniejszy osobny bieg DnD był niestabilny.
+- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone; Kanban: 2 po poprawce; DnD: 1 zaliczony; kolejność i konflikt dwóch sesji: 2 zaliczone. Jeden wcześniejszy osobny bieg DnD był niestabilny.
 - Sekrety: `.env.local` pozostaje lokalny i ignorowany przez Git.
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: formularze (`e644923`).
-- Bieżąca jednostka: synchronizacja Kanbanu i publikacja poprawki.
-- Następny krok w tym samym etapie: transakcyjna obsługa konfliktów kolejności i testy równoczesnych ruchów, następnie audyt uprawnień i rate limitu.
+- Ostatnia ukończona mała jednostka: synchronizacja Kanbanu (`2e603a9`).
+- Bieżąca jednostka: kolejność i konflikty transakcyjne.
+- Następny krok w tym samym etapie: audyt uprawnień, przypisań, zaproszeń i rate limitu; usunięcie `any`; pełna weryfikacja.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `e644923` opublikowany; następna poprawka w toku.
-- Czy drzewo robocze jest czyste? Nie — w toku poprawka Kanbanu.
+- Ostatni commit / wynik pushu: `2e603a9` opublikowany; następna poprawka w toku.
+- Czy drzewo robocze jest czyste? Nie — w toku poprawka kolejności.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

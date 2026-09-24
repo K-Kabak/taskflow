@@ -13,6 +13,16 @@ import { canDeleteTask, canRemoveMember } from "@/lib/access-policy";
 
 const workspacePath = (workspaceId: string) => `/w/${workspaceId}`;
 
+class OrderConflictError extends Error {}
+
+function sameIds(actual: { id: string }[], expected: string[]) {
+  return actual.length === expected.length && actual.every((item, index) => item.id === expected[index]);
+}
+
+function isSerializationConflict(error: unknown) {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2034";
+}
+
 export async function createProjectAction(workspaceId: string, formData: FormData) {
   const { session } = await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
   const parsed = projectSchema.safeParse(Object.fromEntries(formData));
@@ -93,24 +103,39 @@ export async function moveTaskAction(workspaceId: string, input: unknown): Promi
   const parsed = moveTaskSchema.safeParse(input);
   if (!parsed.success) return { ok: false, code: "VALIDATION_ERROR", message: "Nieprawidłowe położenie zadania." };
   const { session, task } = await requireTaskAccess(workspaceId, parsed.data.taskId, { writable: true });
-  try {
-    await db.$transaction(async (tx) => {
-      const source = await tx.task.findMany({ where: { projectId: task.projectId, status: task.status, id: { not: task.id } }, orderBy: [{ position: "asc" }, { id: "asc" }], select: { id: true } });
-      const target = task.status === parsed.data.targetStatus ? source : await tx.task.findMany({ where: { projectId: task.projectId, status: parsed.data.targetStatus }, orderBy: [{ position: "asc" }, { id: "asc" }], select: { id: true } });
-      const index = Math.min(parsed.data.targetIndex, target.length);
-      const orderedTarget = [...target];
-      orderedTarget.splice(index, 0, { id: task.id });
-      await tx.task.update({ where: { id: task.id }, data: { status: parsed.data.targetStatus } });
-      await Promise.all(orderedTarget.map((item, i) => tx.task.update({ where: { id: item.id }, data: { position: (i + 1) * 1000 } })));
-      if (task.status !== parsed.data.targetStatus) await Promise.all(source.map((item, i) => tx.task.update({ where: { id: item.id }, data: { position: (i + 1) * 1000 } })));
-      if (task.status !== parsed.data.targetStatus) await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId: task.id, actorId: session.user.id, action: "TASK_STATUS_CHANGED", metadataJson: { from: task.status, to: parsed.data.targetStatus } } });
-    }, { isolationLevel: "Serializable" });
-    revalidatePath(`/w/${workspaceId}/projects/${task.projectId}`);
-    return { ok: true, data: undefined };
-  } catch (error) {
-    console.error("Nie udało się zapisać kolejności zadania:", error instanceof Error ? error.message : "nieznany błąd");
-    return { ok: false, code: "CONFLICT", message: "Nie udało się zapisać kolejności. Przywrócono poprzedni układ." };
+  const boardPath = `/w/${workspaceId}/projects/${task.projectId}`;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      await db.$transaction(async (tx) => {
+        const current = await tx.task.findFirst({ where: { id: task.id, projectId: task.projectId, project: { workspaceId, archivedAt: null } }, select: { status: true } });
+        if (!current) throw new OrderConflictError();
+        const source = await tx.task.findMany({ where: { projectId: task.projectId, status: current.status }, orderBy: [{ position: "asc" }, { id: "asc" }], select: { id: true } });
+        const target = current.status === parsed.data.targetStatus ? source : await tx.task.findMany({ where: { projectId: task.projectId, status: parsed.data.targetStatus }, orderBy: [{ position: "asc" }, { id: "asc" }], select: { id: true } });
+        if (!sameIds(source, parsed.data.expectedSourceIds) || !sameIds(target, parsed.data.expectedTargetIds)) throw new OrderConflictError();
+
+        const sourceWithout = source.filter((item) => item.id !== task.id);
+        const targetWithout = current.status === parsed.data.targetStatus ? sourceWithout : target;
+        if (parsed.data.targetIndex > targetWithout.length) throw new OrderConflictError();
+        const orderedTarget = [...targetWithout];
+        orderedTarget.splice(parsed.data.targetIndex, 0, { id: task.id });
+        await tx.task.update({ where: { id: task.id }, data: { status: parsed.data.targetStatus } });
+        for (const [index, item] of orderedTarget.entries()) await tx.task.update({ where: { id: item.id }, data: { position: (index + 1) * 1000 } });
+        if (current.status !== parsed.data.targetStatus) {
+          for (const [index, item] of sourceWithout.entries()) await tx.task.update({ where: { id: item.id }, data: { position: (index + 1) * 1000 } });
+          await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId: task.id, actorId: session.user.id, action: "TASK_STATUS_CHANGED", metadataJson: { from: current.status, to: parsed.data.targetStatus } } });
+        }
+      }, { isolationLevel: "Serializable" });
+      revalidatePath(boardPath);
+      return { ok: true, data: undefined };
+    } catch (error) {
+      if (isSerializationConflict(error) && attempt < 2) continue;
+      revalidatePath(boardPath);
+      if (error instanceof OrderConflictError || isSerializationConflict(error)) return { ok: false, code: "CONFLICT", message: "Tablica zmieniła się w innej sesji. Odświeżono układ; spróbuj ponownie." };
+      console.error("Nie udało się zapisać kolejności zadania:", error instanceof Error ? error.name : "nieznany błąd");
+      return { ok: false, code: "INTERNAL_ERROR", message: "Nie udało się zapisać kolejności. Przywrócono poprzedni układ." };
+    }
   }
+  return { ok: false, code: "CONFLICT", message: "Tablica zmieniła się w innej sesji. Spróbuj ponownie." };
 }
 
 export async function createLabelAction(workspaceId: string, formData: FormData) {

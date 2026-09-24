@@ -5,7 +5,7 @@ import { ActionForm } from "@/components/shared/action-form";
 
 import { useMemo, useState } from "react";
 import { closestCorners, DndContext, DragOverlay, KeyboardSensor, PointerSensor, useSensor, useSensors, type DragEndEvent, type DragStartEvent, useDroppable } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Link from "next/link";
 import { CalendarDays, GripVertical, Plus } from "lucide-react";
@@ -31,21 +31,19 @@ export function KanbanBoard({ workspaceId, projectId, initialTasks, readOnly = f
     setActiveId(null); if (!event.over || readOnly || saving) return;
     const moving = tasks.find((task) => task.id === event.active.id); if (!moving) return;
     const overTask = tasks.find((task) => task.id === event.over?.id);
+    if (overTask?.id === moving.id) return;
     const targetStatus = (overTask?.status || event.over.id) as BoardTask["status"];
     if (!columns.some((column) => column.id === targetStatus)) return;
     const targetItems = grouped[targetStatus].filter((task) => task.id !== moving.id);
-    const targetIndex = overTask ? Math.max(0, targetItems.findIndex((task) => task.id === overTask.id)) : targetItems.length;
+    const targetIndex = overTask ? targetItems.findIndex((task) => task.id === overTask.id) : targetItems.length;
+    if (targetIndex < 0) return;
     let next = tasks.filter((task) => task.id !== moving.id);
     const insertAt = next.findIndex((task) => task.status === targetStatus && task.id === targetItems[targetIndex]?.id);
     const updated = { ...moving, status: targetStatus };
     if (insertAt === -1) next = [...next, updated]; else next.splice(insertAt, 0, updated);
-    if (moving.status === targetStatus) {
-      const source = grouped[targetStatus]; const oldIndex = source.findIndex((t) => t.id === moving.id); const newIndex = overTask ? source.findIndex((t) => t.id === overTask.id) : source.length - 1;
-      const reordered = arrayMove(source, oldIndex, newIndex); next = [...tasks.filter((t) => t.status !== targetStatus), ...reordered];
-    }
     setOptimisticTasks(next); setMessage(null); setSaving(true);
     try {
-      const result = await moveTaskAction(workspaceId, { taskId: moving.id, targetStatus, targetIndex });
+      const result = await moveTaskAction(workspaceId, { taskId: moving.id, targetStatus, targetIndex, expectedSourceIds: grouped[moving.status].map((task) => task.id), expectedTargetIds: grouped[targetStatus].map((task) => task.id) });
       if (!result.ok) setMessage(result.message);
     } catch {
       setMessage("Nie udało się zapisać kolejności. Przywrócono poprzedni układ.");
