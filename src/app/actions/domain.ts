@@ -8,7 +8,7 @@ import { requireProjectAccess, requireTaskAccess, requireWorkspaceMember, requir
 import { commentSchema, labelSchema, linkSchema, moveTaskSchema, projectSchema, roleSchema, taskSchema, workspaceSchema } from "@/lib/validations";
 import { parseDateOnly } from "@/lib/date-only";
 import { consumeRateLimit } from "@/lib/rate-limit";
-import type { ActionResult } from "@/lib/action-result";
+import { actionError, type ActionResult } from "@/lib/action-result";
 import { canDeleteTask, canRemoveMember } from "@/lib/access-policy";
 
 const workspacePath = (workspaceId: string) => `/w/${workspaceId}`;
@@ -16,7 +16,7 @@ const workspacePath = (workspaceId: string) => `/w/${workspaceId}`;
 export async function createProjectAction(workspaceId: string, formData: FormData) {
   const { session } = await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
   const parsed = projectSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane projektu.", parsed.error.flatten().fieldErrors);
   const project = await db.project.create({ data: { workspaceId, createdById: session.user.id, ...parsed.data } });
   revalidatePath(workspacePath(workspaceId));
   redirect(`/w/${workspaceId}/projects/${project.id}`);
@@ -26,9 +26,10 @@ export async function updateProjectAction(workspaceId: string, projectId: string
   await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
   await requireProjectAccess(workspaceId, projectId);
   const parsed = projectSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane projektu.", parsed.error.flatten().fieldErrors);
   await db.project.update({ where: { id: projectId }, data: parsed.data });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function setProjectArchivedAction(workspaceId: string, projectId: string, archived: boolean) {
@@ -45,14 +46,16 @@ export async function setProjectArchivedAction(workspaceId: string, projectId: s
 export async function createTaskAction(workspaceId: string, projectId: string, status: string, formData: FormData) {
   const { session } = await requireProjectAccess(workspaceId, projectId, { writable: true });
   const parsed = taskSchema.pick({ title: true, priority: true, dueDate: true }).safeParse({ title: formData.get("title"), priority: formData.get("priority") || "MEDIUM", dueDate: formData.get("dueDate") || "" });
-  if (!parsed.success) return;
-  const validStatus = ["TODO", "IN_PROGRESS", "DONE"].includes(status) ? (status as "TODO" | "IN_PROGRESS" | "DONE") : "TODO";
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane zadania.", parsed.error.flatten().fieldErrors);
+  if (status !== "TODO" && status !== "IN_PROGRESS" && status !== "DONE") return actionError("VALIDATION_ERROR", "Nieprawidłowy status zadania.");
+  const validStatus = status;
   await db.$transaction(async (tx) => {
     const last = await tx.task.aggregate({ where: { projectId, status: validStatus }, _max: { position: true } });
     const task = await tx.task.create({ data: { projectId, createdById: session.user.id, title: parsed.data.title, priority: parsed.data.priority, dueDate: parseDateOnly(parsed.data.dueDate), status: validStatus, position: (last._max.position ?? 0) + 1000 } });
     await tx.activity.create({ data: { workspaceId, projectId, taskId: task.id, actorId: session.user.id, action: "TASK_CREATED", metadataJson: { title: task.title } } });
   });
   revalidatePath(`/w/${workspaceId}/projects/${projectId}`);
+  return { ok: true, data: undefined } as const;
 }
 
 export async function updateTaskAction(workspaceId: string, taskId: string, formData: FormData) {
@@ -60,12 +63,12 @@ export async function updateTaskAction(workspaceId: string, taskId: string, form
   const parsed = taskSchema.safeParse({
     title: formData.get("title"), description: formData.get("description"), status: formData.get("status"), priority: formData.get("priority"), dueDate: formData.get("dueDate"), assigneeIds: formData.getAll("assigneeIds"), labelIds: formData.getAll("labelIds"),
   });
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane zadania.", parsed.error.flatten().fieldErrors);
   const [members, labels] = await Promise.all([
     db.workspaceMember.count({ where: { workspaceId, userId: { in: parsed.data.assigneeIds } } }),
     db.label.count({ where: { workspaceId, id: { in: parsed.data.labelIds } } }),
   ]);
-  if (members !== new Set(parsed.data.assigneeIds).size || labels !== new Set(parsed.data.labelIds).size) return;
+  if (members !== new Set(parsed.data.assigneeIds).size || labels !== new Set(parsed.data.labelIds).size) return actionError("VALIDATION_ERROR", "Wybierz członków i etykiety z bieżącej przestrzeni.");
   const previousAssignees = await db.taskAssignee.findMany({ where: { taskId }, select: { userId: true } });
   const assigneesChanged = previousAssignees.map((item) => item.userId).sort().join("|") !== [...parsed.data.assigneeIds].sort().join("|");
 
@@ -76,6 +79,7 @@ export async function updateTaskAction(workspaceId: string, taskId: string, form
     if (assigneesChanged) await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "TASK_ASSIGNEES_CHANGED", metadataJson: { assigneeIds: parsed.data.assigneeIds } } });
   });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function deleteTaskAction(workspaceId: string, taskId: string) {
@@ -112,31 +116,34 @@ export async function moveTaskAction(workspaceId: string, input: unknown): Promi
 export async function createLabelAction(workspaceId: string, formData: FormData) {
   await requireWorkspaceMember(workspaceId);
   const parsed = labelSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane etykiety.", parsed.error.flatten().fieldErrors);
   await db.label.upsert({ where: { workspaceId_name: { workspaceId, name: parsed.data.name } }, create: { workspaceId, ...parsed.data }, update: { color: parsed.data.color } });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function addCommentAction(workspaceId: string, taskId: string, formData: FormData) {
   const { session, task } = await requireTaskAccess(workspaceId, taskId, { writable: true });
   const parsed = commentSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw komentarz.", parsed.error.flatten().fieldErrors);
   await db.$transaction(async (tx) => {
     await tx.comment.create({ data: { taskId, authorId: session.user.id, body: parsed.data.body } });
     await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "COMMENT_ADDED" } });
   });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function addLinkAction(workspaceId: string, taskId: string, formData: FormData) {
   const { session, task } = await requireTaskAccess(workspaceId, taskId, { writable: true });
   const parsed = linkSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane linku.", parsed.error.flatten().fieldErrors);
   await db.$transaction(async (tx) => {
     await tx.taskLink.create({ data: { taskId, createdById: session.user.id, ...parsed.data } });
     await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "LINK_ADDED", metadataJson: { title: parsed.data.title } } });
   });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function removeLinkAction(workspaceId: string, linkId: string) {
@@ -189,9 +196,11 @@ async function requireWorkspaceMemberForInvite() {
 export async function changeMemberRoleAction(workspaceId: string, userId: string, formData: FormData) {
   const { membership } = await requireWorkspaceRole(workspaceId, ["OWNER"]);
   const parsed = roleSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success || membership.userId === userId) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Wybierz poprawną rolę.", parsed.error.flatten().fieldErrors);
+  if (membership.userId === userId) return actionError("FORBIDDEN", "Nie możesz zmienić własnej roli.");
   await db.workspaceMember.updateMany({ where: { workspaceId, userId, role: { not: "OWNER" } }, data: { role: parsed.data.role } });
   revalidatePath(`/w/${workspaceId}/team`);
+  return { ok: true, data: undefined } as const;
 }
 
 export async function removeMemberAction(workspaceId: string, userId: string) {
@@ -205,15 +214,17 @@ export async function removeMemberAction(workspaceId: string, userId: string) {
 export async function updateWorkspaceAction(workspaceId: string, formData: FormData) {
   await requireWorkspaceRole(workspaceId, ["OWNER"]);
   const parsed = workspaceSchema.safeParse(Object.fromEntries(formData));
-  if (!parsed.success) return;
+  if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw nazwę przestrzeni.", parsed.error.flatten().fieldErrors);
   await db.workspace.update({ where: { id: workspaceId }, data: parsed.data });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }
 
 export async function updateProfileAction(workspaceId: string, formData: FormData) {
   const { session } = await requireWorkspaceMember(workspaceId);
   const name = String(formData.get("name") || "").trim();
-  if (name.length < 2 || name.length > 80) return;
+  if (name.length < 2 || name.length > 80) return actionError("VALIDATION_ERROR", "Imię musi mieć od 2 do 80 znaków.", { name: ["Imię musi mieć od 2 do 80 znaków."] });
   await db.user.update({ where: { id: session.user.id }, data: { name } });
   revalidatePath(workspacePath(workspaceId));
+  return { ok: true, data: undefined } as const;
 }

@@ -8,7 +8,7 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 
 | Waga | Problem i reprodukcja | Oczekiwane / rzeczywiste zachowanie | Lokalizacja | Test i wynik |
 | --- | --- | --- | --- | --- |
-| Średnia | Wyślij dane niezgodne ze schematem w formularzu projektu lub zadania, omijając walidację HTML. | Użytkownik ma otrzymać błąd pola; akcja obecnie wykonuje ciche `return`. | `src/app/actions/domain.ts` | Do dodania. |
+| Średnia | Wyślij nazwę projektu lub tytuł zadania z samych spacji. | Użytkownik ma otrzymać błąd pola; akcja wcześniej wykonywała ciche `return`. | `src/app/actions/domain.ts` oraz formularze | `e2e/forms.spec.ts`: 2 testy zaliczone; poprawka: commit formularzy. |
 | Średnia | Zmień tytuł, termin, etykiety lub przypisanych w panelu zadania bez zmiany statusu i wróć na tablicę. | Karta ma od razu pokazać zapisane dane; obecny stan `useState(initialTasks)` i klucz ID/status mogą zachować stare dane. | `src/components/tasks/kanban-board.tsx`, widok projektu | Do potwierdzenia E2E i naprawy. |
 
 ## Ryzyka wymagające reprodukcji

@@ -11,7 +11,8 @@
 
 | Jednostka | Weryfikacja | Commit | Push |
 | --- | --- | --- | --- |
-| Dokumenty wejściowe i punkt wznowienia | Stan Git, remote, CI i migracji sprawdzone | w toku | nie |
+| Dokumenty wejściowe i punkt wznowienia | Stan Git, remote, CI i migracji sprawdzone | `d8a63db` | tak |
+| Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -23,21 +24,21 @@
 - `pnpm typecheck`: OK podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm test`: 15/15 podczas planowania, wymaga ponowienia po zmianach.
 - `pnpm build`: OK podczas planowania, wymaga ponowienia po zmianach.
-- E2E: nieuruchomione w tym etapie. Ostatni bieg CI dla `f9cbdda` zakończył się sukcesem.
+- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone. Jeden osobny bieg DnD nie przeszedł; trwa analiza stabilności scenariusza.
 - Sekrety: `.env.local` pozostaje lokalny i ignorowany przez Git.
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: przegląd dokumentacji, stanu Git i dokumentacji zainstalowanego Next.js 16.
-- Bieżąca jednostka: publikacja dokumentów wejściowych i rozpoczęcie audytu.
-- Następny krok w tym samym etapie: audyt funkcjonalny i bezpieczeństwa, reprodukcja usterek, poprawki z testami regresyjnymi.
+- Ostatnia ukończona mała jednostka: opublikowanie pakietu v1.1 i punktu wznowienia.
+- Bieżąca jednostka: formularze, testy regresyjne i publikacja poprawki.
+- Następny krok w tym samym etapie: diagnoza DnD, spójności kart i współbieżności, następnie audyt uprawnień i rate limitu.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: brak zmian Etapu 1 na starcie.
-- Czy drzewo robocze jest czyste? Nie — nieśledzone materiały pakietu v1.1 przed pierwszym commitem.
+- Ostatni commit / wynik pushu: `d8a63db` opublikowany; następna poprawka w toku.
+- Czy drzewo robocze jest czyste? Nie — w toku poprawka formularzy.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.
