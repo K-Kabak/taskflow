@@ -14,7 +14,8 @@
 | Dokumenty wejściowe i punkt wznowienia | Stan Git, remote, CI i migracji sprawdzone | `d8a63db` | tak |
 | Formularze: jawne błędy walidacji, stan zapisu i ochrona przed powtórnym wysłaniem | `lint`, `typecheck`, 15 unit, `build`, 2 E2E formularzy OK | `e644923` | tak |
 | Synchronizacja kart po edycji oraz cofnięcie optymistycznego ruchu po błędzie | `lint`, `typecheck`, 15 unit, `build`, 2 E2E (edycja i rollback) OK; istniejący DnD po seedzie OK | `2e603a9` | tak |
-| Spójna kolejność i odmowa nadpisania układu z drugiej sesji | `lint`, `typecheck`, 15 unit, 2 E2E kolejności OK; `build` do uruchomienia | commit w toku | nie |
+| Spójna kolejność i odmowa nadpisania układu z drugiej sesji | `lint`, `typecheck`, 15 unit, 2 E2E kolejności, `build` OK | `06eb9da` | tak |
+| Atomowy rate limit i ignorowanie niezaufanego IP | `lint`, `typecheck`, 17 testów, `build`, 2 E2E auth OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -31,16 +32,16 @@
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: synchronizacja Kanbanu (`2e603a9`).
-- Bieżąca jednostka: kolejność i konflikty transakcyjne.
-- Następny krok w tym samym etapie: audyt uprawnień, przypisań, zaproszeń i rate limitu; usunięcie `any`; pełna weryfikacja.
+- Ostatnia ukończona mała jednostka: kolejność i konflikty (`06eb9da`).
+- Bieżąca jednostka: rate limit i publikacja poprawki.
+- Następny krok w tym samym etapie: testy uprawnień, przypisań i zaproszeń; usunięcie `any`; pełna weryfikacja.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `2e603a9` opublikowany; następna poprawka w toku.
-- Czy drzewo robocze jest czyste? Nie — w toku poprawka kolejności.
+- Ostatni commit / wynik pushu: `06eb9da` opublikowany; następna poprawka w toku.
+- Czy drzewo robocze jest czyste? Nie — w toku poprawka rate limitu.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

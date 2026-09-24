@@ -16,12 +16,16 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | Ryzyko | Miejsce i plan sprawdzenia |
 | --- | --- |
 | Seryjne konflikty bazy przy jednoczesnym ruchu dwóch kart. | `moveTaskAction`: obsłużone ograniczonym ponowieniem transakcji `Serializable`; końcowe E2E obejmie dwie sesje i przestarzały układ. |
-| Nagłówki `x-forwarded-for` i `x-real-ip` mogą mieć niepewne pochodzenie. | `consumeRateLimit`: sprawdzić model zaufania hostingu, testować współbieżne żądania i limit. |
+| Poza Vercel nagłówek `x-forwarded-for` może być dostarczony przez klienta. | `consumeRateLimit`: identyfikator użytkownika ma niezależny limit poza Vercel; IP jest uwzględniany tylko w środowisku Vercel, które nadpisuje nagłówek. Podczas Etapu 4 potwierdzić rzeczywiste nagłówki wdrożenia. |
 | Typ `any` ukrywa błędy kontraktu danych panelu zadania. | Widok projektu i panel: zastąpić typem payloadu Prisma / jawnego DTO. |
 
 ## Kolejność kart
 
 Wcześniej UI liczył pozycję inaczej niż serwer przy ruchu w jednej kolumnie i nie przekazywał wersji układu. Teraz klient i serwer stosują pozycję po wyjęciu przesuwanej karty, a serwer porównuje pełne ID obu kolumn w transakcji. Nieaktualny układ jest odrzucany z odświeżeniem widoku. `e2e/kanban-order.spec.ts` sprawdza trwałość kolejności po przeładowaniu i odmowę nadpisania zmiany z drugiej sesji.
+
+## Rate limit
+
+Potwierdzono wyścig podczas tworzenia licznika przy równoczesnych żądaniach: poprzedni odczyt i `upsert` mogły nadpisać licznik wartością 1. Zastąpiono je atomowym `INSERT ... ON CONFLICT DO UPDATE`. Test integracyjny wysyła 25 równoczesnych prób, sprawdza dokładnie 10 dopuszczonych przy limicie 10, reset okna oraz odporność na zmianę niezweryfikowanego `x-forwarded-for`. Po zmianie przeszły również E2E logowania. Dla hostingu Vercel podstawą zaufania do nagłówka jest [dokumentacja Vercel](https://vercel.com/docs/headers/request-headers); konfigurację produkcyjną ponownie zweryfikować w Etapie 4.
 
 ## Kontrole końcowe
 
