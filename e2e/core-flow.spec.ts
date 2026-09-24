@@ -32,7 +32,7 @@ test("obcy użytkownik nie może wejść do projektu Studio", async ({ page }) =
   await page.getByRole("button", { name: "Utwórz konto" }).click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
   await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign");
-  await expect(page.getByText("This page could not be found")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Nie znaleziono strony" })).toBeVisible();
 });
 
 test("menu mobilne prowadzi do zespołu", async ({ page, isMobile }) => {
