@@ -91,44 +91,46 @@ Rozpakuj `TASKFLOW_V1_1_PACKAGE.zip` **do katalogu głównego istniejącego repo
 
 # ETAP 1 — Code review i rzeczywiste poprawki
 
+**Status: ukończony 2026-09-25.** Wyniki, dowody i punkt wznowienia: `PROGRESS.md` oraz `docs/quality/REVIEW_V1_1.md`. Punkt dotyczący filtrowanej tablicy należy do Etapu 3 i pozostaje odłożony. Wymagana jest odrębna zgoda użytkownika na Etap 2.
+
 **Cel:** zapewnić poprawność istniejącego MVP, zanim zaczniemy kosmetykę i nowe funkcje. **Nie rozbudowuj zakresu produktu w tym etapie.**
 
 ### 1.1 Audyt stanu i lista usterek
 
-- [ ] Przejrzyj repo, modele Prisma, Server Actions, uprawnienia, testy, stan CI, konsolę przeglądarki oraz logi serwera.
-- [ ] Utwórz `docs/quality/REVIEW_V1_1.md`: dla każdej usterki podaj wagę, kroki reprodukcji, oczekiwane/rzeczywiste zachowanie, lokalizację i test regresyjny. Oddziel potwierdzone błędy od usprawnień.
-- [ ] Sprawdź działanie rejestracji, logowania, tworzenia projektu, CRUD zadań, przesuwania kart, zaproszeń, ról, archiwizacji, listy, kalendarza i wyszukiwania na świeżej bazie.
+- [x] Przejrzyj repo, modele Prisma, Server Actions, uprawnienia, testy, stan CI, konsolę przeglądarki oraz logi serwera.
+- [x] Utwórz `docs/quality/REVIEW_V1_1.md`: dla każdej usterki podaj wagę, kroki reprodukcji, oczekiwane/rzeczywiste zachowanie, lokalizację i test regresyjny. Oddziel potwierdzone błędy od usprawnień.
+- [x] Sprawdź działanie rejestracji, logowania, tworzenia projektu, CRUD zadań, przesuwania kart, zaproszeń, ról, archiwizacji, listy, kalendarza i wyszukiwania na świeżej bazie.
 
 ### 1.2 Kanban i spójność danych
 
 Pliki do przeglądu: `src/components/tasks/kanban-board.tsx`, `src/app/actions/domain.ts`, `src/app/w/[workspaceId]/projects/[projectId]/page.tsx`.
 
-- [ ] Zweryfikuj aktualizowanie lokalnego stanu kart po zmianach serwerowych. Obecny komponent inicjuje stan przez `useState(initialTasks)`, a klucz zewnętrzny opiera się na identyfikatorach i statusach; sprawdź scenariusze zmiany **tytułu, terminu, etykiet, przypisań i samej kolejności** bez zmiany statusu.
-- [ ] Zapewnij przewidywalny stan po zapisie, błędzie, odświeżeniu, szybkich kolejnych gestach i zmianie widoku; nie dopuść do wyświetlania przestarzałych danych.
-- [ ] Sprawdź równoczesne przenoszenie kart. Zastosuj bezpieczną transakcję i adekwatną obsługę konfliktów/ponowienia operacji; nie zgub kolejności i nie nadpisuj zmian bez komunikatu.
+- [x] Zweryfikuj aktualizowanie lokalnego stanu kart po zmianach serwerowych. Obecny komponent inicjuje stan przez `useState(initialTasks)`, a klucz zewnętrzny opiera się na identyfikatorach i statusach; sprawdź scenariusze zmiany **tytułu, terminu, etykiet, przypisań i samej kolejności** bez zmiany statusu.
+- [x] Zapewnij przewidywalny stan po zapisie, błędzie, odświeżeniu, szybkich kolejnych gestach i zmianie widoku; nie dopuść do wyświetlania przestarzałych danych.
+- [x] Sprawdź równoczesne przenoszenie kart. Zastosuj bezpieczną transakcję i adekwatną obsługę konfliktów/ponowienia operacji; nie zgub kolejności i nie nadpisuj zmian bez komunikatu.
 - [ ] Dla filtrowanej tablicy w późniejszym etapie 3 nie pozwól, by przeniesienie karty przypadkowo przestawiało ukryte zadania.
-- [ ] Rozszerz E2E o przeładowanie po DnD, odwrócenie zmiany po niepowodzeniu, sortowanie w obrębie kolumny i edycję danych karty.
+- [x] Rozszerz E2E o przeładowanie po DnD, odwrócenie zmiany po niepowodzeniu, sortowanie w obrębie kolumny i edycję danych karty.
 
 ### 1.3 Obsługa formularzy i błędów
 
-- [ ] Sprawdź Server Actions, które przy `!parsed.success` kończą się bez odpowiedzi dla użytkownika (m.in. w `src/app/actions/domain.ts`). Zwracaj ustrukturyzowane błędy i pokaż je przy właściwych polach / nad formularzem.
-- [ ] Dodaj stany `pending`, zapobieganie wielokrotnemu wysyłaniu, komunikat zapisu oraz odpowiednią obsługę niepowodzenia w projektach, zadaniach, komentarzach, etykietach i ustawieniach.
-- [ ] Nie zatajaj błędów infrastrukturalnych pod komunikatem sukcesu. Błędy walidacji i dostępu muszą mieć poprawne, bezpieczne komunikaty po polsku.
+- [x] Sprawdź Server Actions, które przy `!parsed.success` kończą się bez odpowiedzi dla użytkownika (m.in. w `src/app/actions/domain.ts`). Zwracaj ustrukturyzowane błędy i pokaż je przy właściwych polach / nad formularzem.
+- [x] Dodaj stany `pending`, zapobieganie wielokrotnemu wysyłaniu, komunikat zapisu oraz odpowiednią obsługę niepowodzenia w projektach, zadaniach, komentarzach, etykietach i ustawieniach.
+- [x] Nie zatajaj błędów infrastrukturalnych pod komunikatem sukcesu. Błędy walidacji i dostępu muszą mieć poprawne, bezpieczne komunikaty po polsku.
 
 ### 1.4 Uprawnienia, bezpieczeństwo, typy
 
-- [ ] Przetestuj negatywne przypadki cross-workspace (IDOR), role OWNER/ADMIN/MEMBER, operacje na zarchiwizowanym projekcie, wygasłe/zużyte zaproszenie, niedozwolone przypisania i etykiety z obcej przestrzeni.
-- [ ] Oceń `src/lib/rate-limit.ts`: ustal, czy środowisko wdrożenia ufa nagłówkom proxy (`x-forwarded-for`/`x-real-ip`), zanim użyjesz ich jako identyfikatora; dodaj testy limitów i współbieżnych żądań.
-- [ ] Usuń niepotrzebne `any` z widoku projektu i panelu zadania, używając jawnych DTO lub typów wynikających z zapytań Prisma.
-- [ ] Sprawdź, że kod i logi nie ujawniają tokenów zaproszeń, sekretów ani prywatnych danych innej przestrzeni.
+- [x] Przetestuj negatywne przypadki cross-workspace (IDOR), role OWNER/ADMIN/MEMBER, operacje na zarchiwizowanym projekcie, wygasłe/zużyte zaproszenie, niedozwolone przypisania i etykiety z obcej przestrzeni.
+- [x] Oceń `src/lib/rate-limit.ts`: ustal, czy środowisko wdrożenia ufa nagłówkom proxy (`x-forwarded-for`/`x-real-ip`), zanim użyjesz ich jako identyfikatora; dodaj testy limitów i współbieżnych żądań.
+- [x] Usuń niepotrzebne `any` z widoku projektu i panelu zadania, używając jawnych DTO lub typów wynikających z zapytań Prisma.
+- [x] Sprawdź, że kod i logi nie ujawniają tokenów zaproszeń, sekretów ani prywatnych danych innej przestrzeni.
 
 ### Kryteria odbioru etapu 1
 
-- [ ] Każda potwierdzona usterka ma poprawkę i test regresyjny; otwarte ryzyka są jawnie opisane.
-- [ ] Wszystkie kontrole `lint`, `typecheck`, `test`, `build` i wymagane E2E przechodzą; brak nowych błędów w konsoli krytycznych ścieżek.
-- [ ] Zmiany są podzielone na **osobne commity według problemu**, np. `fix: synchronize kanban state after task update`, `fix: show server validation errors`, `test: cover cross-workspace mutations`.
+- [x] Każda potwierdzona usterka ma poprawkę i test regresyjny; otwarte ryzyka są jawnie opisane.
+- [x] Wszystkie kontrole `lint`, `typecheck`, `test`, `build` i wymagane E2E przechodzą; brak nowych błędów w konsoli krytycznych ścieżek.
+- [x] Zmiany są podzielone na **osobne commity według problemu**, np. `fix: synchronize kanban state after task update`, `fix: show server validation errors`, `test: cover cross-workspace mutations`.
 
-- [ ] **Bramka etapu 1:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 2 bez odrębnej zgody.
+- [x] **Bramka etapu 1:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 2 bez odrębnej zgody.
 
 ---
 
@@ -283,7 +285,7 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 
 ## Definition of Done całej wersji v1.1
 
-- [ ] Etap 1: naprawione potwierdzone problemy, rzetelny raport i testy regresyjne.
+- [x] Etap 1: naprawione potwierdzone problemy, rzetelny raport i testy regresyjne.
 - [ ] Etap 2: spójne, dostępne UI na desktopie i telefonie; nowe rzeczywiste screenshoty.
 - [ ] Etap 3: checklisty, filtry Kanbanu, powiadomienia w aplikacji, statystyki — z migracjami i testami.
 - [ ] Etap 4: działające bezpieczne demo HTTPS, aktualne README i zielone CI.

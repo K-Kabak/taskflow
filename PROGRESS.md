@@ -3,7 +3,7 @@
 ## Aktualny etap i zgoda użytkownika
 
 - Autoryzowany etap: **1 — Code review, błędy i bezpieczeństwo**.
-- Status: **w toku**.
+- Status: **ukończony; bramka przed Etapem 2**.
 - Zgoda: polecenie użytkownika z 2026-09-25: „Rozpocznij realizację wyłącznie Etapu 1”.
 - Etapu 2 nie rozpoczynać bez nowej, wyraźnej zgody.
 
@@ -22,7 +22,7 @@
 | Izolacja E2E, lokalne ładowanie testowej konfiguracji rate limitu i screenshot Etapu 1 | Chromium: 20 OK, 1 pominięty; mobile: 18 OK, 3 pominięte; rzeczywisty screenshot na świeżej bazie | `98e68f6` | tak |
 | Walidacja parametru miesiąca kalendarza | Reprodukcja błędu Prisma; po poprawce 2 E2E desktop/mobile OK, lista i search OK | `01f2512` | tak |
 | Niezależność testów od zmienionych tytułów zadań między projektami Playwright | 5/5 ponowionych testów mobile OK na zmienionej bazie; pełny E2E: 40 OK, 4 celowo pominięte | `a1c247f` | tak |
-| Regresja usuwania zadania po utworzeniu i odświeżeniu | 2 E2E desktop/mobile OK | commit w toku | nie |
+| Regresja usuwania zadania po utworzeniu i odświeżeniu | 2 E2E desktop/mobile OK | `67c8291` | tak |
 
 ## Stan środowiska i Git
 
@@ -30,25 +30,25 @@
 - `origin/main`: ten sam SHA na starcie etapu.
 - `git status -sb` na starcie: czysty kod MVP; nieśledzony pakiet v1.1.
 - PostgreSQL: lokalny kontener działa; migracja początkowa aktualna.
-- `pnpm lint`: OK podczas planowania, wymaga ponowienia po zmianach.
-- `pnpm typecheck`: OK podczas planowania, wymaga ponowienia po zmianach.
-- `pnpm test`: 15/15 podczas planowania, wymaga ponowienia po zmianach.
-- `pnpm build`: OK podczas planowania, wymaga ponowienia po zmianach.
-- E2E: baza `taskflow_e2e`, migracja i seed OK; baza wyjściowa: 11 zaliczonych, 3 planowo pominięte; formularze: 2 zaliczone; Kanban: 2 po poprawce; DnD: 1 zaliczony; kolejność i konflikt dwóch sesji: 2 zaliczone. Jeden wcześniejszy osobny bieg DnD był niestabilny.
+- `pnpm lint`: OK po końcowych zmianach.
+- `pnpm typecheck`: OK po końcowych zmianach.
+- `pnpm test`: 17/17 w 5 plikach po końcowych zmianach.
+- `pnpm build`: OK po zmianach w kodzie aplikacji.
+- `pnpm exec playwright test --reporter=dot`: 40 zaliczonych, 4 planowo pominięte w projektach Chromium i mobile, w jednym przebiegu na osobnej bazie `taskflow_e2e`.
+- Po rozszerzeniu testu CRUD: 2/2 E2E desktop/mobile, `lint` i `typecheck` OK; GitHub Actions dla `67c8291`: oba zadania `quality` i `e2e` zakończone sukcesem.
+- Rzeczywisty zrzut: `docs/screenshots/stage-1/kanban-desktop.png`, wykonany na świeżej bazie `taskflow_e2e_stage1` po `migrate deploy` i seedzie. Próba `prisma migrate reset --force` została odrzucona przez zabezpieczenie Prisma; nie wykonano resetu żadnej bazy.
 - Sekrety: `.env.local` pozostaje lokalny i ignorowany przez Git.
 
-## W toku, pozostałe zadania i blokady
+## Punkt wznowienia i pozostałe ryzyka
 
-- Ostatnia ukończona mała jednostka: niezależność testów (`a1c247f`).
-- Bieżąca jednostka: test usunięcia zadania w przepływie CRUD.
-- Następny krok w tym samym etapie: końcowa dokumentacja i raport.
-- Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
-- Screenshoty aplikacji po zmianach: `docs/screenshots/stage-1/kanban-desktop.png` wykonany na osobnej, świeżej bazie E2E.
+- Ostatnia ukończona mała jednostka: weryfikacja usunięcia zadania (`67c8291`).
+- Następny krok po nowej zgodzie: rozpocząć wyłącznie Etap 2 według `TASKFLOW_V1_1_ROADMAP.md`, po odczycie tego pliku, Git i `docs/quality/REVIEW_V1_1.md`.
+- Ryzyka: przed wdrożeniem potwierdzić konfigurację zaufanego proxy; równoczesne utworzenie zadań może pozostawić jednakowe pozycje sortowania (brak reprodukcji utraty danych); w lokalnym `next dev` przy przerwaniu nawigacji sporadycznie pojawia się `destination stream closed early` bez niepowodzenia E2E. Szczegóły w raporcie jakości.
 
 ## Raport na bramce etapu
 
-- Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `a1c247f` opublikowany; następna poprawka w toku.
-- Czy drzewo robocze jest czyste? Nie — w toku walidacja zapisów zadania.
-- Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
+- Kryteria odbioru: **spełnione lokalnie; CI końcowego commita dokumentacyjnego należy sprawdzić w Actions**.
+- Ostatni commit kodu / push: `67c8291` opublikowany; ten dokument jest końcowym checkpointem Etapu 1.
+- Drzewo robocze po końcowym commicie i pushu: potwierdzić poleceniem `git status -sb` przed przekazaniem raportu.
+- CI: `67c8291` zielone (`quality`, `e2e`); wynik dla końcowego `HEAD` potwierdzić przed raportem użytkownikowi.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

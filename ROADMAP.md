@@ -24,7 +24,18 @@ Etap jest oznaczany jako zakończony dopiero po spełnieniu kryteriów i uruchom
 - Nie dodawaj funkcji spoza MVP ani atrap interfejsu.
 - Po etapie wykonaj logiczny commit i push; blokada GitHub nie zatrzymuje pracy lokalnej.
 
-## Ostatnia pełna weryfikacja
+## TaskFlow v1.1 — stan etapów
+
+| Etap | Stan | Weryfikacja | Punkt wznowienia |
+| --- | --- | --- | --- |
+| 1. Code review, błędy i bezpieczeństwo | [x] | 17/17 testów, 40 E2E zaliczonych i 4 planowo pominięte, `lint`, `typecheck`, `build` OK; szczegóły w `PROGRESS.md` | STOP — wymagana osobna zgoda na Etap 2 |
+| 2. UI/UX | [ ] | Jeszcze nie rozpoczęty | Po wyraźnej zgodzie użytkownika |
+| 3. Funkcje v1.1 | [ ] | Jeszcze nie rozpoczęty | Po odbiorze Etapu 2 |
+| 4. Deployment i portfolio | [ ] | Jeszcze nie rozpoczęty | Po odbiorze Etapu 3 |
+
+Szczegółowy przegląd Etapu 1: `docs/quality/REVIEW_V1_1.md`. Rzeczywisty zrzut po poprawkach: `docs/screenshots/stage-1/kanban-desktop.png`. Pakiet referencji i zakres kolejnych etapów opisuje `TASKFLOW_V1_1_ROADMAP.md`.
+
+## Ostatnia pełna weryfikacja MVP przed Etapem 1 v1.1
 
 - `pnpm lint` — OK
 - `pnpm typecheck` — OK
