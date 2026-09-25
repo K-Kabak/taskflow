@@ -11,6 +11,7 @@ test("zapisuje rzeczywisty screenshot tablicy", async ({ page }, testInfo) => {
   await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign");
   await expect(page.getByRole("heading", { name: "Przebudowa strony internetowej" })).toBeVisible();
   await page.setViewportSize({ width: 1440, height: 960 });
-  await mkdir("docs/screenshots/stage-1", { recursive: true });
-  await page.screenshot({ path: "docs/screenshots/stage-1/kanban-desktop.png", fullPage: true, caret: "initial" });
+  const screenshotPath = process.env.CAPTURE_STAGE1_SCREENSHOT === "1" ? "docs/screenshots/stage-1/kanban-desktop.png" : testInfo.outputPath("stage-1-kanban-desktop.png");
+  if (process.env.CAPTURE_STAGE1_SCREENSHOT === "1") await mkdir("docs/screenshots/stage-1", { recursive: true });
+  await page.screenshot({ path: screenshotPath, fullPage: true, caret: "initial" });
 });
