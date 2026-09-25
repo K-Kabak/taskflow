@@ -23,9 +23,9 @@ async function login(page: Page) {
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
 }
 
-async function dragBefore(page: Page, movingTitle: string, targetTitle: string) {
-  const moving = page.getByText(movingTitle).locator("xpath=ancestor::article");
-  const target = page.getByText(targetTitle).locator("xpath=ancestor::article");
+async function dragBefore(page: Page, movingId: string, targetId: string) {
+  const moving = page.locator(`a[href*="task=${movingId}"]`).locator("xpath=ancestor::article");
+  const target = page.locator(`a[href*="task=${targetId}"]`).locator("xpath=ancestor::article");
   const from = await moving.getByRole("button", { name: /Przenieś zadanie/ }).boundingBox();
   const to = await target.boundingBox();
   expect(from).not.toBeNull();
@@ -41,11 +41,11 @@ async function dragBefore(page: Page, movingTitle: string, targetTitle: string) 
 test("zmiana kolejności w kolumnie jest trwała", async ({ page }) => {
   await login(page);
   await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign");
-  await dragBefore(page, "Mapa nowej nawigacji", "Audyt obecnej strony");
+  await dragBefore(page, "seed_task_02", "seed_task_01");
   const todo = page.locator("section").filter({ has: page.getByRole("heading", { name: "Do zrobienia" }) }).first();
-  await expect(todo.locator("article").first()).toContainText("Mapa nowej nawigacji");
+  await expect(todo.locator("article").first().locator('a[href*="task=seed_task_02"]')).toBeVisible();
   await page.reload();
-  await expect(todo.locator("article").first()).toContainText("Mapa nowej nawigacji");
+  await expect(todo.locator("article").first().locator('a[href*="task=seed_task_02"]')).toBeVisible();
 });
 
 test("nie nadpisuje zmiany wykonanej w innej sesji", async ({ page, context }) => {
@@ -58,7 +58,7 @@ test("nie nadpisuje zmiany wykonanej w innej sesji", async ({ page, context }) =
   await page.getByRole("dialog").getByRole("button", { name: "Zapisz zmiany" }).click();
   await expect(page.getByRole("dialog").getByText("Zapisano zmiany.")).toBeVisible();
 
-  await dragBefore(otherPage, "Mapa nowej nawigacji", "Treści strony głównej");
+  await dragBefore(otherPage, "seed_task_02", "seed_task_03");
   await expect(otherPage.getByText(/Tablica zmieniła się w innej sesji/)).toBeVisible();
   await expect(otherPage.locator("section").filter({ has: otherPage.getByRole("heading", { name: "W trakcie" }) }).first().getByText("Audyt obecnej strony")).toBeVisible();
   await otherPage.close();

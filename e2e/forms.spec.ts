@@ -20,9 +20,10 @@ test("odrzuca niepoprawną nazwę projektu z widocznym błędem", async ({ page 
 test("odrzuca niepoprawny tytuł zadania bez zmiany danych", async ({ page }) => {
   await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign?task=seed_task_02");
   const panel = page.getByRole("dialog");
+  const previousTitle = await panel.getByLabel("Tytuł").inputValue();
   await panel.getByLabel("Tytuł").fill(" ");
   await panel.getByRole("button", { name: "Zapisz zmiany" }).click();
   await expect(panel.getByRole("alert")).toContainText("Tytuł zadania");
   await page.reload();
-  await expect(panel.getByLabel("Tytuł")).toHaveValue("Mapa nowej nawigacji");
+  await expect(panel.getByLabel("Tytuł")).toHaveValue(previousTitle);
 });

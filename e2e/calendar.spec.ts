@@ -11,7 +11,7 @@ test("lista, kalendarz i wyszukiwanie działają także przy błędnym parametrz
 
   await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign?view=list&q=Mapa");
   await expect(page.locator("tbody tr")).toHaveCount(1);
-  await expect(page.locator("tbody tr")).toContainText("Mapa nowej nawigacji");
+  await expect(page.locator("tbody tr")).toContainText("Mapa");
 
   const search = await page.request.get("/api/w/seed_workspace_studio/search?q=Mapa");
   expect(search.status()).toBe(200);
