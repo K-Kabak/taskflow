@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test("rejestracja tworzy przestrzeń, projekt i zadanie", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.test`;

@@ -1,4 +1,19 @@
-import { expect, test, type Page } from "@playwright/test";
+import type { Page } from "./fixtures";
+import { expect, test, testDatabase } from "./fixtures";
+
+test.beforeEach(async () => {
+  const db = testDatabase();
+  try {
+    await db.$transaction([
+      db.task.update({ where: { id: "seed_task_01" }, data: { status: "TODO", position: 1000 } }),
+      db.task.update({ where: { id: "seed_task_02" }, data: { status: "TODO", position: 2000 } }),
+      db.task.update({ where: { id: "seed_task_03" }, data: { status: "TODO", position: 3000 } }),
+      db.task.update({ where: { id: "seed_task_04" }, data: { status: "TODO", position: 4000 } }),
+    ]);
+  } finally {
+    await db.$disconnect();
+  }
+});
 
 async function login(page: Page) {
   await page.goto("/login");

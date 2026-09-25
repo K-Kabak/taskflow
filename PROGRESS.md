@@ -18,7 +18,8 @@
 | Atomowy rate limit i ignorowanie niezaufanego IP | `lint`, `typecheck`, 17 testów, `build`, 2 E2E auth OK | `a091ae0` | tak |
 | Walidacja zapisów zadania, duplikatów i obcych relacji | `lint`, `typecheck`, 17 testów, `build`, 6 E2E security OK | `4e66373` | tak |
 | Typy danych widoku projektu i panelu zadania | `lint`, `typecheck`, 17 testów jednostkowych/integracyjnych OK | `df388d8` | tak |
-| Blokada zapisu projektu po archiwizacji | E2E otwartego formularza projektu OK | commit w toku | nie |
+| Blokada zapisu projektu po archiwizacji | E2E otwartego formularza projektu OK; `lint`, `typecheck` OK | `b0687e7` | tak |
+| Izolacja E2E, lokalne ładowanie testowej konfiguracji rate limitu i screenshot Etapu 1 | Chromium: 20 OK, 1 pominięty; mobile: 18 OK, 3 pominięte; rzeczywisty screenshot na świeżej bazie | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -35,16 +36,16 @@
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: typy danych (`df388d8`).
-- Bieżąca jednostka: blokada edycji zarchiwizowanego projektu.
-- Następny krok w tym samym etapie: przegląd pozostałych przepływów, pełna weryfikacja.
+- Ostatnia ukończona mała jednostka: blokada edycji zarchiwizowanego projektu (`b0687e7`).
+- Bieżąca jednostka: izolacja testów E2E i rzeczywisty screenshot Etapu 1.
+- Następny krok w tym samym etapie: naprawa niepoprawnego miesiąca kalendarza, pełna weryfikacja i raport.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
-- Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
+- Screenshoty aplikacji po zmianach: `docs/screenshots/stage-1/kanban-desktop.png` wykonany na osobnej, świeżej bazie E2E.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `df388d8` opublikowany; następna poprawka w toku.
+- Ostatni commit / wynik pushu: `b0687e7` opublikowany; następna poprawka w toku.
 - Czy drzewo robocze jest czyste? Nie — w toku walidacja zapisów zadania.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

@@ -8,8 +8,8 @@ const request = vi.hoisted(() => ({ headers: new Headers() }));
 vi.mock("server-only", () => ({}));
 vi.mock("next/headers", () => ({ headers: async () => request.headers }));
 
-import { db } from "@/lib/db";
-import { consumeRateLimit } from "@/lib/rate-limit";
+const { db } = await import("@/lib/db");
+const { consumeRateLimit } = await import("@/lib/rate-limit");
 
 const originalVercel = process.env.VERCEL;
 afterAll(async () => {

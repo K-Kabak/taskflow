@@ -36,4 +36,6 @@ Potwierdzono wyścig podczas tworzenia licznika przy równoczesnych żądaniach:
 
 ## Kontrole końcowe
 
-Do uzupełnienia po zamknięciu Etapu 1: scenariusze ręczne, testy automatyczne, logi przeglądarki/serwera, otwarte ryzyka i linki do commitów.
+Po pierwszym pełnym przebiegu E2E ujawniono dwa problemy zestawu: scenariusze zużywały wspólny limit logowania, a test kolejności kart polegał na stanie zmienionym wcześniej. Izolacja liczników przed każdym scenariuszem i ustawienie wejściowej kolejności w testach Kanbana pozwoliły zaliczyć osobno cały projekt Chromium (20 OK, 1 pominięty) i mobile (18 OK, 3 pominięte). Testowa baza jest sprawdzana po nazwie przed operacjami porządkowymi. Istniejący historyczny screenshot pozostaje punktem odniesienia; aktualny rzeczywisty zrzut jest w `docs/screenshots/stage-1/kanban-desktop.png`.
+
+Do uzupełnienia po zamknięciu Etapu 1: ostateczne testy automatyczne, logi przeglądarki/serwera, otwarte ryzyka i linki do commitów.

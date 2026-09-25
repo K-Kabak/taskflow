@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 test("karta odświeża dane po edycji bez zmiany statusu", async ({ page }) => {
   await page.goto("/login");
