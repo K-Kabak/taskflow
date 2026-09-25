@@ -1,2 +1,9 @@
 "use client";
-export default function WorkspaceError({ reset }: { error: Error; reset: () => void }) { return <div className="grid min-h-96 place-items-center"><div className="text-center"><h2 className="text-2xl font-semibold">Coś poszło nie tak</h2><p className="mt-2 text-[#777772]">Nie udało się wczytać tej części TaskFlow.</p><button onClick={reset} className="mt-5 rounded-xl bg-orange-500 px-4 py-2 font-medium text-white">Spróbuj ponownie</button></div></div>; }
+
+export default function WorkspaceError({ retry }: { error: Error & { digest?: string }; retry: () => void }) {
+  return <div role="alert" className="tf-card mx-auto max-w-lg p-8 text-center">
+    <h1 className="text-xl font-semibold">Nie udało się wczytać widoku</h1>
+    <p className="mt-2 text-sm text-[var(--muted)]">Spróbuj ponownie. Jeśli problem się powtarza, odśwież stronę.</p>
+    <button onClick={retry} className="tf-button-primary mt-5 px-5 py-2.5">Spróbuj ponownie</button>
+  </div>;
+}
