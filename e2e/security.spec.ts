@@ -95,6 +95,26 @@ test("archiwizacja w innej sesji blokuje zapis już otwartego zadania", async ({
   }
 });
 
+test("archiwizacja w innej sesji blokuje zapis już otwartego projektu", async ({ page }) => {
+  const db = database();
+  try {
+    await login(page);
+    await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign");
+    const editor = page.getByText("Edytuj projekt");
+    await editor.click();
+    const form = page.locator("form").filter({ has: page.getByRole("button", { name: "Zapisz", exact: true }) });
+    const previous = await form.locator('input[name="name"]').inputValue();
+    await form.locator('input[name="name"]').fill("Projekt po archiwizacji");
+    await db.project.update({ where: { id: "seed_project_redesign" }, data: { archivedAt: new Date() } });
+    await form.getByRole("button", { name: "Zapisz", exact: true }).click();
+    await expect(form.getByRole("alert")).toContainText("Zarchiwizowany projekt jest tylko do odczytu.");
+    expect((await db.project.findUniqueOrThrow({ where: { id: "seed_project_redesign" } })).name).toBe(previous);
+  } finally {
+    await db.project.update({ where: { id: "seed_project_redesign" }, data: { archivedAt: null } });
+    await db.$disconnect();
+  }
+});
+
 test("wyszukiwanie nie ujawnia danych obcej przestrzeni", async ({ page }) => {
   const email = `foreign-search-${randomUUID()}@example.test`;
   await page.goto("/register");

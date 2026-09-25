@@ -17,7 +17,8 @@
 | Spójna kolejność i odmowa nadpisania układu z drugiej sesji | `lint`, `typecheck`, 15 unit, 2 E2E kolejności, `build` OK | `06eb9da` | tak |
 | Atomowy rate limit i ignorowanie niezaufanego IP | `lint`, `typecheck`, 17 testów, `build`, 2 E2E auth OK | `a091ae0` | tak |
 | Walidacja zapisów zadania, duplikatów i obcych relacji | `lint`, `typecheck`, 17 testów, `build`, 6 E2E security OK | `4e66373` | tak |
-| Typy danych widoku projektu i panelu zadania | `lint`, `typecheck`, 17 testów jednostkowych/integracyjnych OK | commit w toku | nie |
+| Typy danych widoku projektu i panelu zadania | `lint`, `typecheck`, 17 testów jednostkowych/integracyjnych OK | `df388d8` | tak |
+| Blokada zapisu projektu po archiwizacji | E2E otwartego formularza projektu OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -34,8 +35,8 @@
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: walidacja zapisów zadania (`4e66373`).
-- Bieżąca jednostka: typy payloadów Prisma w widoku projektu i panelu zadania.
+- Ostatnia ukończona mała jednostka: typy danych (`df388d8`).
+- Bieżąca jednostka: blokada edycji zarchiwizowanego projektu.
 - Następny krok w tym samym etapie: przegląd pozostałych przepływów, pełna weryfikacja.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: jeszcze nie wykonano.
@@ -43,7 +44,7 @@
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `4e66373` opublikowany; następna poprawka w toku.
+- Ostatni commit / wynik pushu: `df388d8` opublikowany; następna poprawka w toku.
 - Czy drzewo robocze jest czyste? Nie — w toku walidacja zapisów zadania.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.

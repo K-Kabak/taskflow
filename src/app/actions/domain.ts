@@ -52,7 +52,8 @@ export async function createProjectAction(workspaceId: string, formData: FormDat
 
 export async function updateProjectAction(workspaceId: string, projectId: string, formData: FormData) {
   await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
-  await requireProjectAccess(workspaceId, projectId);
+  const access = await writableProjectOrError(workspaceId, projectId);
+  if ("ok" in access) return access;
   const parsed = projectSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw dane projektu.", parsed.error.flatten().fieldErrors);
   await db.project.update({ where: { id: projectId }, data: parsed.data });
