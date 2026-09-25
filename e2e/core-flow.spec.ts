@@ -20,6 +20,13 @@ test("rejestracja tworzy przestrzeń, projekt i zadanie", async ({ page }) => {
   await expect(page.getByText("Pierwsze zadanie E2E")).toBeVisible();
   await page.reload();
   await expect(page.getByText("Pierwsze zadanie E2E")).toBeVisible();
+  await page.getByText("Pierwsze zadanie E2E").click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("dialog").getByRole("button", { name: "Usuń zadanie" }).click();
+  await expect(page.getByText("Pierwsze zadanie E2E")).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByText("Pierwsze zadanie E2E")).toHaveCount(0);
 });
 
 test("obcy użytkownik nie może wejść do projektu Studio", async ({ page }) => {

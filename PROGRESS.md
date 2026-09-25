@@ -21,7 +21,8 @@
 | Blokada zapisu projektu po archiwizacji | E2E otwartego formularza projektu OK; `lint`, `typecheck` OK | `b0687e7` | tak |
 | Izolacja E2E, lokalne ładowanie testowej konfiguracji rate limitu i screenshot Etapu 1 | Chromium: 20 OK, 1 pominięty; mobile: 18 OK, 3 pominięte; rzeczywisty screenshot na świeżej bazie | `98e68f6` | tak |
 | Walidacja parametru miesiąca kalendarza | Reprodukcja błędu Prisma; po poprawce 2 E2E desktop/mobile OK, lista i search OK | `01f2512` | tak |
-| Niezależność testów od zmienionych tytułów zadań między projektami Playwright | 5/5 ponowionych testów mobile OK na zmienionej bazie | commit w toku | nie |
+| Niezależność testów od zmienionych tytułów zadań między projektami Playwright | 5/5 ponowionych testów mobile OK na zmienionej bazie; pełny E2E: 40 OK, 4 celowo pominięte | `a1c247f` | tak |
+| Regresja usuwania zadania po utworzeniu i odświeżeniu | 2 E2E desktop/mobile OK | commit w toku | nie |
 
 ## Stan środowiska i Git
 
@@ -38,16 +39,16 @@
 
 ## W toku, pozostałe zadania i blokady
 
-- Ostatnia ukończona mała jednostka: walidacja miesiąca (`01f2512`).
-- Bieżąca jednostka: usunięcie zależności testów od tytułu zmienionego w poprzednim projekcie Playwright.
-- Następny krok w tym samym etapie: powtórzenie pełnego E2E, końcowa dokumentacja i raport.
+- Ostatnia ukończona mała jednostka: niezależność testów (`a1c247f`).
+- Bieżąca jednostka: test usunięcia zadania w przepływie CRUD.
+- Następny krok w tym samym etapie: końcowa dokumentacja i raport.
 - Znane ryzyka do zbadania: ciche odrzucenie danych przez akcje serwerowe, nieaktualny stan kart po edycji, współbieżne przesuwanie, nagłówki proxy w rate limicie.
 - Screenshoty aplikacji po zmianach: `docs/screenshots/stage-1/kanban-desktop.png` wykonany na osobnej, świeżej bazie E2E.
 
 ## Raport na bramce etapu
 
 - Kryteria odbioru: **w toku**.
-- Ostatni commit / wynik pushu: `01f2512` opublikowany; następna poprawka w toku.
+- Ostatni commit / wynik pushu: `a1c247f` opublikowany; następna poprawka w toku.
 - Czy drzewo robocze jest czyste? Nie — w toku walidacja zapisów zadania.
 - Czy CI jest zielone? Ostatni bieg dla bazowego `f9cbdda`: tak; nowe commity wymagają własnej weryfikacji.
 - Po zamknięciu Etapu 1: **STOP — czekam na wyraźne polecenie rozpoczęcia Etapu 2**.
