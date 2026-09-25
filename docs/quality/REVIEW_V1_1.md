@@ -13,6 +13,7 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | Średnia | Dodaj ten sam identyfikator osoby dwa razy do formularza zadania. | Relacja powinna powstać raz; wcześniej weryfikacja unikalnych ID przechodziła, ale zapis próbował utworzyć duplikat klucza głównego. | `updateTaskAction` | `e2e/security.spec.ts`: zapis i odmowa obcej osoby/etykiety przechodzą. |
 | Niska | Otwórz zadanie, zarchiwizuj projekt w drugiej sesji i spróbuj zapisać edycję. | Zmiana musi być odmówiona z czytelnym komunikatem; wcześniej serwer rzucał oczekiwany błąd, a formularz pokazywał ogólny komunikat. | Akcje zapisu zadania i `requireTaskAccess` | `e2e/security.spec.ts`: zapis zablokowany, tytuł bez zmian. |
 | Średnia | Otwórz edycję projektu, zarchiwizuj projekt w drugiej sesji i spróbuj zapisać nazwę. | Zapis powinien być odmówiony; akcja wcześniej sprawdzała tylko dostęp, więc zmieniała zarchiwizowany projekt. | `updateProjectAction` | `e2e/security.spec.ts`: zapis zablokowany, nazwa bez zmian. |
+| Średnia | Otwórz kalendarz z `?month=2026-99`. | Strona powinna pokazać bieżący miesiąc; wcześniej przekazywała `Invalid Date` do Prisma i kończyła się błędem. | Widok kalendarza | `e2e/calendar.spec.ts`: test najpierw nie przeszedł, po poprawce 2/2 desktop/mobile OK. |
 
 ## Ryzyka wymagające reprodukcji
 

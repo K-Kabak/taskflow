@@ -7,7 +7,8 @@ import { requireWorkspaceMember } from "@/lib/permissions";
 
 export default async function CalendarPage({ params, searchParams }: { params: Promise<{ workspaceId: string }>; searchParams: Promise<{ month?: string; day?: string }> }) {
   const { workspaceId } = await params; const query = await searchParams; await requireWorkspaceMember(workspaceId);
-  const current = /^\d{4}-\d{2}$/.test(query.month || "") ? new Date(`${query.month}-01T12:00:00`) : new Date();
+  const requestedMonth = /^\d{4}-(0[1-9]|1[0-2])$/.test(query.month || "") ? new Date(`${query.month}-01T12:00:00`) : null;
+  const current = requestedMonth && !Number.isNaN(requestedMonth.getTime()) ? requestedMonth : new Date();
   const start = startOfWeek(startOfMonth(current), { weekStartsOn: 1 }); const end = endOfWeek(endOfMonth(current), { weekStartsOn: 1 });
   const tasks = await db.task.findMany({ where: { project: { workspaceId, archivedAt: null }, dueDate: { gte: start, lte: end } }, include: { project: true }, orderBy: { dueDate: "asc" } });
   const byDay = new Map<string, typeof tasks>(); tasks.forEach((task) => { const key = task.dueDate!.toISOString().slice(0, 10); byDay.set(key, [...(byDay.get(key) || []), task]); });
