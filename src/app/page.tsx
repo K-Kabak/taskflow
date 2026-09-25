@@ -3,6 +3,7 @@ import { ArrowRight, CheckCircle2, Columns3, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 export default async function HomePage() {
   const session = await getCurrentSession();
@@ -14,8 +15,7 @@ export default async function HomePage() {
     <main className="min-h-screen overflow-hidden px-5 py-6 sm:px-8">
       <nav className="mx-auto flex max-w-6xl items-center justify-between">
         <Link href="/" className="flex items-center gap-3 font-semibold" aria-label="TaskFlow — strona główna">
-          <span className="grid size-9 place-items-center rounded-xl bg-orange-500 text-white">T</span>
-          TaskFlow
+          <BrandLogo />
         </Link>
         <div className="flex items-center gap-2">
           <Link href="/login" className="rounded-xl px-4 py-2 text-sm font-medium hover:bg-white">Zaloguj się</Link>

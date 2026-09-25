@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import { CalendarDays, ChevronsUpDown, FolderKanban, Gauge, LogOut, Menu, Settings, UserRoundCheck, Users, X } from "lucide-react";
 import { Avatar } from "@/components/shared/avatar";
 import { SearchBox } from "@/components/layout/search-box";
+import { BrandLogo } from "@/components/shared/brand-logo";
 
 type ShellProps = {
   workspace: { id: string; name: string };
@@ -27,7 +28,7 @@ export function AppShell({ workspace, workspaces, user, children }: ShellProps) 
   const pathname = usePathname();
   const router = useRouter();
   const sidebar = <aside className="flex h-full w-[232px] shrink-0 flex-col border-r border-[#ececea] bg-[#fafaf8] px-4 py-5">
-    <Link href={`/w/${workspace.id}/dashboard`} className="mb-6 flex items-center gap-3 px-2 font-semibold"><span className="grid size-9 place-items-center rounded-xl bg-orange-500 text-white">T</span>TaskFlow</Link>
+    <Link href={`/w/${workspace.id}/dashboard`} className="mb-6 flex items-center px-2" aria-label="TaskFlow — dashboard"><BrandLogo /></Link>
     <label className="relative mb-6 block"><span className="sr-only">Aktywna przestrzeń</span><select value={workspace.id} onChange={(event) => router.push(`/w/${event.target.value}/dashboard`)} className="h-11 w-full appearance-none rounded-xl border border-[#e8e8e3] bg-white px-3 pr-9 text-sm font-medium"><option disabled>Przestrzeń</option>{workspaces.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select><ChevronsUpDown className="pointer-events-none absolute top-3.5 right-3 text-[#8a8a84]" size={15} /></label>
     <p className="mb-2 px-3 text-[11px] font-semibold tracking-wider text-[#9a9a95] uppercase">Główne</p>
     <nav className="space-y-1">{navigation.map((item) => { const href = `/w/${workspace.id}/${item.href}`; const active = pathname.startsWith(href); return <Link onClick={() => setOpen(false)} key={item.href} href={href} className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition ${active ? "bg-white font-semibold text-[#252525] shadow-sm" : "text-[#6f6f6b] hover:bg-white/70"}`}><item.icon size={17} className={active ? "text-orange-500" : ""} />{item.label}</Link>; })}</nav>

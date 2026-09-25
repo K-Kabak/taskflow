@@ -1,6 +1,6 @@
-# TaskFlow — logo (propozycja v1.1)
+# TaskFlow — historyczna propozycja logo v1.1
 
-To **nowa propozycja identyfikacji**, nie obowiązkowy element MVP. Nie nadpisuj starego znaku bez decyzji użytkownika.
+Ten katalog zawiera historyczną propozycję z pakietu referencji. Obowiązującą identyfikację, zatwierdzoną przez użytkownika na Etap 2, zawiera `public/branding/taskflow-v1.1/`. Nie używaj wariantów z tego katalogu w aplikacji.
 
 - `taskflow-mark.svg` — skalowalny sygnet na przezroczystym tle.
 - `taskflow-wordmark-dark.svg` i `taskflow-wordmark-light.svg` — warianty na jasnym/ciemnym tle.

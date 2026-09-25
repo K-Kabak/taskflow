@@ -68,11 +68,11 @@ Rozpakuj `TASKFLOW_V1_1_PACKAGE.zip` **do katalogu głównego istniejącego repo
 
    ![Koncepcja mobilnego widoku tablicy](docs/taskflow-v11/concept-mobile.png)
 
-**Opcjonalna propozycja minimalistycznego logo (w pakiecie):**
+**Historyczna propozycja minimalistycznego logo (w pakiecie):**
 
 ![Warianty logo TaskFlow i paleta](docs/taskflow-v11/branding/taskflow-logo-guide.png)
 
-Źródła: [`taskflow-mark.svg`](docs/taskflow-v11/branding/taskflow-mark.svg), [`taskflow-wordmark-dark.svg`](docs/taskflow-v11/branding/taskflow-wordmark-dark.svg), [`taskflow-wordmark-light.svg`](docs/taskflow-v11/branding/taskflow-wordmark-light.svg), [`favicon.svg`](docs/taskflow-v11/branding/favicon.svg). Szczegóły w [`README-BRANDING.md`](docs/taskflow-v11/branding/README-BRANDING.md). **Logo jest propozycją; nie podmieniaj dotychczasowej identyfikacji bez akceptacji użytkownika.** Warianty SVG/PNG przygotowano jako zasoby projektu, nie jako obrazy udające zrzuty ekranu.
+Źródła historyczne: [`taskflow-mark.svg`](docs/taskflow-v11/branding/taskflow-mark.svg), [`taskflow-wordmark-dark.svg`](docs/taskflow-v11/branding/taskflow-wordmark-dark.svg), [`taskflow-wordmark-light.svg`](docs/taskflow-v11/branding/taskflow-wordmark-light.svg), [`favicon.svg`](docs/taskflow-v11/branding/favicon.svg). Szczegóły w [`README-BRANDING.md`](docs/taskflow-v11/branding/README-BRANDING.md). **Obowiązujące logo zostało zatwierdzone przez użytkownika i znajduje się w `public/branding/taskflow-v1.1/`.** Warianty SVG/PNG przygotowano jako zasoby projektu, nie jako obrazy udające zrzuty ekranu.
 
 **Ważne rozróżnienie zakresu:** w **etapie 2** dopracuj wygląd i interakcje **już działających funkcji**. Nowe checklisty, centrum powiadomień, filtry tablicy i statystyki to **etap 3**. Nie pokazuj nieaktywnych przycisków ani wymyślonych wyników „na pokaz”.
 
@@ -136,11 +136,11 @@ Pliki do przeglądu: `src/components/tasks/kanban-board.tsx`, `src/app/actions/d
 
 # ETAP 2 — Dopracowanie UI/UX zgodnie z referencjami
 
-**Cel:** ewolucja obecnego wyglądu bez rebrandingu. Porównuj [screen obecny](docs/screenshots/taskflow-board.png), [referencję z adnotacjami](docs/taskflow-v11/reference-annotated.png) i [koncepcję tablicy](docs/taskflow-v11/concept-kanban-desktop.png). **Koncepcja jest kierunkiem, nie makietą do ślepego odwzorowania.**
+**Cel:** ewolucja obecnego wyglądu z zatwierdzonym przez użytkownika nowym logo w `public/branding/taskflow-v1.1/`. Porównuj [screen obecny](docs/screenshots/taskflow-board.png), [referencję z adnotacjami](docs/taskflow-v11/reference-annotated.png) i [koncepcję tablicy](docs/taskflow-v11/concept-kanban-desktop.png). **Koncepcja jest kierunkiem, nie makietą do ślepego odwzorowania.**
 
 ### 2.1 Spójny design system
 
-- [ ] Przed wdrożeniem nowego znaku pokaż użytkownikowi propozycję z `docs/taskflow-v11/branding/`; dopiero po akceptacji podmień ikonę w sidebarze, favicon, metadanych i materiałach portfolio.
+- [x] Użytkownik zatwierdził nowe autorskie logo w `public/branding/taskflow-v1.1/`; zastąp nim ikonę w sidebarze, favicon i metadanych. Materiały w `docs/taskflow-v11/branding/` pozostają wyłącznie historyczną referencją.
 
 - [ ] Zdefiniuj zmienne kolorów/odstępów/promieni i typografię w istniejącym systemie Tailwind/CSS. Zastąp wybrane powtarzające się wartości hex wspólnymi tokenami, nie zmieniając nagle całego UI.
 - [ ] Utrzymaj ciepłą biel, bardzo jasne szarości, pojedynczy pomarańczowy akcent, delikatne obramowania i cienie oraz spójne zaokrąglenia kart, inputów, paneli i przycisków.

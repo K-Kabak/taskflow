@@ -2,10 +2,10 @@
 
 ## Aktualny etap i zgoda użytkownika
 
-- Autoryzowany etap: **1 — Code review, błędy i bezpieczeństwo**.
-- Status: **ukończony; bramka przed Etapem 2**.
-- Zgoda: polecenie użytkownika z 2026-09-25: „Rozpocznij realizację wyłącznie Etapu 1”.
-- Etapu 2 nie rozpoczynać bez nowej, wyraźnej zgody.
+- Autoryzowany etap: **2 — UI/UX i dostępność**.
+- Status: **w trakcie**; punktem wyjścia jest ukończony Etap 1 (`8b2105d`).
+- Zgoda: polecenie użytkownika z 2026-09-25 na realizację wyłącznie Etapu 2 oraz wdrożenie zatwierdzonego logo z `public/branding/taskflow-v1.1/`.
+- Etapu 3 nie rozpoczynać bez nowej, wyraźnej zgody.
 
 ## Wykonane jednostki i commity
 
