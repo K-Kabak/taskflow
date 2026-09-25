@@ -19,7 +19,7 @@ Poniżej rejestrujemy osobno usterki potwierdzone kodem lub reprodukcją oraz ry
 | --- | --- |
 | Seryjne konflikty bazy przy jednoczesnym ruchu dwóch kart. | `moveTaskAction`: obsłużone ograniczonym ponowieniem transakcji `Serializable`; końcowe E2E obejmie dwie sesje i przestarzały układ. |
 | Poza Vercel nagłówek `x-forwarded-for` może być dostarczony przez klienta. | `consumeRateLimit`: identyfikator użytkownika ma niezależny limit poza Vercel; IP jest uwzględniany tylko w środowisku Vercel, które nadpisuje nagłówek. Podczas Etapu 4 potwierdzić rzeczywiste nagłówki wdrożenia. |
-| Typ `any` ukrywa błędy kontraktu danych panelu zadania. | Widok projektu i panel: zastąpić typem payloadu Prisma / jawnego DTO. |
+| Typ `any` ukrywa błędy kontraktu danych panelu zadania. | Widok projektu i panel: zastąpiono typami payloadu Prisma; `typecheck` przechodzi. |
 
 ## Izolacja przestrzeni i role
 
