@@ -14,7 +14,7 @@ test("karta odświeża dane po edycji bez zmiany statusu", async ({ page }) => {
   await panel.getByLabel("Priorytet").selectOption("HIGH");
   await panel.getByRole("button", { name: "Zapisz zmiany" }).click();
   await expect(panel.getByText("Zapisano zmiany.")).toBeVisible();
-  await panel.getByRole("link", { name: "Zamknij", exact: true }).click();
+  await panel.getByRole("button", { name: "Zamknij panel zadania" }).click();
   const card = page.getByRole("article").filter({ hasText: "Mapa nawigacji po audycie" });
   await expect(card).toBeVisible();
   await expect(card).toContainText("Wysoki");
