@@ -50,6 +50,11 @@ test("menu mobilne prowadzi do zespołu", async ({ page, isMobile }) => {
   await page.getByRole("button", { name: "Zaloguj się" }).click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
   await page.getByRole("button", { name: "Otwórz menu" }).click();
+  await expect(page.getByRole("dialog", { name: "Menu nawigacyjne" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog", { name: "Menu nawigacyjne" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Otwórz menu" })).toBeFocused();
+  await page.getByRole("button", { name: "Otwórz menu" }).click();
   await page.getByRole("link", { name: "Zespół" }).click();
   await expect(page.getByRole("heading", { name: "Zespół" })).toBeVisible();
 });
