@@ -3,9 +3,37 @@
 ## Aktualny etap i zgoda użytkownika
 
 - Autoryzowany etap: **2 — UI/UX i dostępność**.
-- Status: **w trakcie**; punktem wyjścia jest ukończony Etap 1 (`8b2105d`).
+- Status: **ukończony; bramka przed Etapem 3**. Punktem wyjścia był ukończony Etap 1 (`8b2105d`).
 - Zgoda: polecenie użytkownika z 2026-09-25 na realizację wyłącznie Etapu 2 oraz wdrożenie zatwierdzonego logo z `public/branding/taskflow-v1.1/`.
 - Etapu 3 nie rozpoczynać bez nowej, wyraźnej zgody.
+
+## Etap 2 — wykonane jednostki i commity
+
+| Jednostka | Commit | Push |
+| --- | --- | --- |
+| Zatwierdzone logo, warianty PNG/SVG, favicon, metadane oraz archiwizacja wcześniejszej propozycji | `7e124c7` | tak |
+| Tokeny UI, typografia i stany kontrolek | `4ab0cbb` | tak |
+| Sidebar, aktywna nawigacja i mobilne menu z obsługą fokusu | `eb0cb06` | tak |
+| Karty Kanban, puste kolumny, informacja zwrotna i gest dotykowy | `3648efb` | tak |
+| Zakładki projektu, responsywna lista i dostępny panel zadania z zachowaniem kontekstu | `1f259e8` | tak |
+| Dashboard z rzeczywistymi licznikami i układem responsywnym | `a498666` | tak |
+| Etykiety formularzy projektów | `ba932ae` | tak |
+| Stany ładowania i ponowienia po błędzie | `addb348` | tak |
+| Kontrast istniejących przycisków i nazwa przestrzeni w sidebarze | `45bcc54` | tak |
+| Pięć rzeczywistych zrzutów, test pięciu szerokości i przegląd UI | `4922d08` | tak |
+
+## Etap 2 — weryfikacja i punkt wznowienia
+
+- `PLAN.md` nie był dostępny lokalnie; użyto `TASKFLOW_V1_1_ROADMAP.md`, `ROADMAP.md`, `PROGRESS.md`, `docs/quality/REVIEW_V1_1.md`, referencji i aktualnego kodu.
+- `pnpm lint` — OK; `pnpm typecheck` — OK; `pnpm test` — **17/17**; `pnpm build` — OK.
+- `pnpm exec playwright test --reporter=dot` na świeżej bazie `taskflow_e2e_stage2` — **43 zaliczone, 5 planowo pominiętych** (cztery istniejące warianty desktop-only oraz nowy zestaw zrzutów uruchamiany raz w Chromium).
+- Kontrola układu: 360, 390, 768, 1280 i 1440 px. Zrzuty: `docs/screenshots/v1.1/kanban-desktop.png`, `dashboard-desktop.png`, `task-panel.png`, `kanban-mobile.png`, `empty-state.png`. Porównanie: `docs/quality/UI_REVIEW_V1_1.md`.
+- CI dla ostatniego commita kodu i zrzutów `4922d08` — zielone. Po końcowym commicie dokumentacyjnym ponownie sprawdzić GitHub Actions.
+- Drzewo Git po pełnym E2E: czyste przed aktualizacją niniejszych dokumentów. Każda jednostka została osobno opublikowana na istniejącym `origin/main`; historii nie przepisywano.
+- Pozostałe ryzyko: odczucie gestu przeciągania wymaga sprawdzenia na fizycznym telefonie; natywne pola i czcionki mogą różnić się między systemami. Lokalny `next dev` nadal czasem zapisuje `destination stream closed early` po przerwaniu nawigacji, bez niepowodzenia E2E.
+- Punkt wznowienia w nowej sesji: sprawdzić `git status -sb`, `git log -1`, CI końcowego commita i ten dokument. **STOP przed Etapem 3; wymagana osobna, wyraźna zgoda użytkownika.**
+
+## Etap 1 — archiwum postępu
 
 ## Wykonane jednostki i commity
 

@@ -28,12 +28,12 @@ Etap jest oznaczany jako zakończony dopiero po spełnieniu kryteriów i uruchom
 
 | Etap | Stan | Weryfikacja | Punkt wznowienia |
 | --- | --- | --- | --- |
-| 1. Code review, błędy i bezpieczeństwo | [x] | 17/17 testów, 40 E2E zaliczonych i 4 planowo pominięte, `lint`, `typecheck`, `build` OK; szczegóły w `PROGRESS.md` | STOP — wymagana osobna zgoda na Etap 2 |
-| 2. UI/UX | [ ] | Jeszcze nie rozpoczęty | Po wyraźnej zgodzie użytkownika |
+| 1. Code review, błędy i bezpieczeństwo | [x] | 17/17 testów, 40 E2E zaliczonych i 4 planowo pominięte, `lint`, `typecheck`, `build` OK; szczegóły w `PROGRESS.md` | Zamknięty commitem `8b2105d` |
+| 2. UI/UX | [x] | 17/17 testów, 43 E2E zaliczone i 5 planowo pominiętych, `lint`, `typecheck`, `build` OK; 5 rzeczywistych zrzutów | STOP — wymagana osobna zgoda na Etap 3 |
 | 3. Funkcje v1.1 | [ ] | Jeszcze nie rozpoczęty | Po odbiorze Etapu 2 |
 | 4. Deployment i portfolio | [ ] | Jeszcze nie rozpoczęty | Po odbiorze Etapu 3 |
 
-Szczegółowy przegląd Etapu 1: `docs/quality/REVIEW_V1_1.md`. Rzeczywisty zrzut po poprawkach: `docs/screenshots/stage-1/kanban-desktop.png`. Pakiet referencji i zakres kolejnych etapów opisuje `TASKFLOW_V1_1_ROADMAP.md`.
+Szczegółowy przegląd Etapu 1: `docs/quality/REVIEW_V1_1.md`. Przegląd UI po Etapie 2: `docs/quality/UI_REVIEW_V1_1.md` i `docs/screenshots/v1.1/`. Pakiet referencji i zakres kolejnych etapów opisuje `TASKFLOW_V1_1_ROADMAP.md`.
 
 ## Ostatnia pełna weryfikacja MVP przed Etapem 1 v1.1
 

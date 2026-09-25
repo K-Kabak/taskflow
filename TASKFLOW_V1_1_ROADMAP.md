@@ -136,16 +136,18 @@ Pliki do przeglądu: `src/components/tasks/kanban-board.tsx`, `src/app/actions/d
 
 # ETAP 2 — Dopracowanie UI/UX zgodnie z referencjami
 
+**Wynik Etapu 2:** 17/17 testów, 43 E2E zaliczone, 5 planowo pominiętych; `lint`, `typecheck`, `build` OK. Zrzuty i porównanie: `docs/screenshots/v1.1/` oraz `docs/quality/UI_REVIEW_V1_1.md`. Zatrzymano pracę przed Etapem 3.
+
 **Cel:** ewolucja obecnego wyglądu z zatwierdzonym przez użytkownika nowym logo w `public/branding/taskflow-v1.1/`. Porównuj [screen obecny](docs/screenshots/taskflow-board.png), [referencję z adnotacjami](docs/taskflow-v11/reference-annotated.png) i [koncepcję tablicy](docs/taskflow-v11/concept-kanban-desktop.png). **Koncepcja jest kierunkiem, nie makietą do ślepego odwzorowania.**
 
 ### 2.1 Spójny design system
 
 - [x] Użytkownik zatwierdził nowe autorskie logo w `public/branding/taskflow-v1.1/`; zastąp nim ikonę w sidebarze, favicon i metadanych. Materiały w `docs/taskflow-v11/branding/` pozostają wyłącznie historyczną referencją.
 
-- [ ] Zdefiniuj zmienne kolorów/odstępów/promieni i typografię w istniejącym systemie Tailwind/CSS. Zastąp wybrane powtarzające się wartości hex wspólnymi tokenami, nie zmieniając nagle całego UI.
-- [ ] Utrzymaj ciepłą biel, bardzo jasne szarości, pojedynczy pomarańczowy akcent, delikatne obramowania i cienie oraz spójne zaokrąglenia kart, inputów, paneli i przycisków.
-- [ ] Ujednolić stany `hover`, `focus-visible`, `disabled`, `loading`, `error`, `success` i warianty priorytetów. Nie używaj samego koloru jako jedynego nośnika informacji.
-- [ ] Zachowaj czytelność tekstu oraz kontrast, także dla przycisków i mniejszych metadanych.
+- [x] Zdefiniuj zmienne kolorów/odstępów/promieni i typografię w istniejącym systemie Tailwind/CSS. Zastąp wybrane powtarzające się wartości hex wspólnymi tokenami, nie zmieniając nagle całego UI.
+- [x] Utrzymaj ciepłą biel, bardzo jasne szarości, pojedynczy pomarańczowy akcent, delikatne obramowania i cienie oraz spójne zaokrąglenia kart, inputów, paneli i przycisków.
+- [x] Ujednolić stany `hover`, `focus-visible`, `disabled`, `loading`, `error`, `success` i warianty priorytetów. Nie używaj samego koloru jako jedynego nośnika informacji.
+- [x] Zachowaj czytelność tekstu oraz kontrast, także dla przycisków i mniejszych metadanych.
 
 ### 2.2 Tablica i nawigacja — konkrety ze screenów
 
@@ -157,27 +159,27 @@ Pliki do przeglądu: `src/components/tasks/kanban-board.tsx`, `src/app/actions/d
 | Kolumny | Punkt **4** referencji | Spójne szerokości/odstępy, responsywny poziomy scroll na telefonie, sensowne puste stany i szybkie dodanie zadania. |
 | Komunikaty | Koncepcja tablicy/panelu | Po operacji wyświetl zwięzły toast/status z wynikiem; jeśli realnie wspierasz cofnięcie, akcja „Cofnij” musi działać. |
 
-- [ ] Nie umieszczaj nowego paska filtrów z koncepcji jako martwej dekoracji. **Filtry Kanbanu pojawią się dopiero po implementacji w etapie 3**.
-- [ ] Zachowaj istniejące nazwy i rzeczywiste dane użytkowników; nie wstawiaj na stałe nazw, dat ani liczników z ilustracji.
+- [x] Nie umieszczaj nowego paska filtrów z koncepcji jako martwej dekoracji. **Filtry Kanbanu pojawią się dopiero po implementacji w etapie 3**.
+- [x] Zachowaj istniejące nazwy i rzeczywiste dane użytkowników; nie wstawiaj na stałe nazw, dat ani liczników z ilustracji.
 
 ### 2.3 Panel zadania, formularze i dostępność
 
 Materiał: [kadr panelu zadania](docs/taskflow-v11/concept-task-panel.png).
 
-- [ ] Uporządkuj hierarchię panelu: nagłówek i status; tytuł/opis; priorytet, termin i przypisani; etykiety; komentarze; linki; historia. Sekcja checklisty pojawia się **dopiero w etapie 3**.
-- [ ] Panel `role="dialog"` powinien poprawnie zarządzać fokusem, obsługiwać Escape, utrzymywać fokus wewnątrz i przy zamknięciu przywracać go do wywołującego elementu; sprawdź zamykanie po kliknięciu tła.
-- [ ] Przycisk zamykania powinien zachowywać bieżący widok/filtry tam, gdzie to stosowne; nie gub kontekstu użytkownika.
-- [ ] Zapewnij widoczne błędy walidacji, status zapisywania i prawidłowe etykiety pól; nie zostawiaj samych placeholderów jako etykiet.
+- [x] Uporządkuj hierarchię panelu: nagłówek i status; tytuł/opis; priorytet, termin i przypisani; etykiety; komentarze; linki; historia. Sekcja checklisty pojawia się **dopiero w etapie 3**.
+- [x] Panel `role="dialog"` powinien poprawnie zarządzać fokusem, obsługiwać Escape, utrzymywać fokus wewnątrz i przy zamknięciu przywracać go do wywołującego elementu; sprawdź zamykanie po kliknięciu tła.
+- [x] Przycisk zamykania powinien zachowywać bieżący widok/filtry tam, gdzie to stosowne; nie gub kontekstu użytkownika.
+- [x] Zapewnij widoczne błędy walidacji, status zapisywania i prawidłowe etykiety pól; nie zostawiaj samych placeholderów jako etykiet.
 
 ### 2.4 Dashboard i mobile
 
 Materiały: [dashboard](docs/taskflow-v11/concept-dashboard.png), [mobile](docs/taskflow-v11/concept-mobile.png).
 
-- [ ] Popraw proporcje istniejących kafli statystyk, list projektów i terminów; ujednolić odstępy i typografię. **Nowy wykres postępów i feed w dashboardzie dopiero w etapie 3**.
-- [ ] Na szerokościach 360/390/768/1280/1440 px sprawdź poziomy overflow, menu, nawigację, tablicę, przyciski i panel zadania. Tylko tablica może mieć zamierzony poziomy scroll; formularze i nagłówek nie powinny wyjeżdżać poza viewport.
-- [ ] Na urządzeniach dotykowych uchwyt DnD nie może uniemożliwiać przewijania; zapewnij alternatywne przenoszenie zadania przez pole statusu.
-- [ ] Dodaj stany puste/ładowania i sensowne komunikaty błędów; nie wstawiaj danych demonstracyjnych przy braku danych.
-- [ ] Preferuj subtelne animacje respektujące `prefers-reduced-motion`.
+- [x] Popraw proporcje istniejących kafli statystyk, list projektów i terminów; ujednolić odstępy i typografię. **Nowy wykres postępów i feed w dashboardzie dopiero w etapie 3**.
+- [x] Na szerokościach 360/390/768/1280/1440 px sprawdź poziomy overflow, menu, nawigację, tablicę, przyciski i panel zadania. Tylko tablica może mieć zamierzony poziomy scroll; formularze i nagłówek nie powinny wyjeżdżać poza viewport.
+- [x] Na urządzeniach dotykowych uchwyt DnD nie może uniemożliwiać przewijania; zapewnij alternatywne przenoszenie zadania przez pole statusu.
+- [x] Dodaj stany puste/ładowania i sensowne komunikaty błędów; nie wstawiaj danych demonstracyjnych przy braku danych.
+- [x] Preferuj subtelne animacje respektujące `prefers-reduced-motion`.
 
 ### 2.5 Obowiązkowe rzeczywiste screeny po implementacji
 
@@ -185,12 +187,12 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 
 ### Kryteria odbioru etapu 2
 
-- [ ] Zachowano oryginalny język wizualny, a wskazane ekrany są spójne i funkcjonalne.
-- [ ] Brak klikalnych atrap; podstawowe interakcje dostępne z klawiatury i na urządzeniach mobilnych.
-- [ ] Testy wizualne lub manualny przegląd z zapisanymi screenami przy ww. rozdzielczościach; `lint`, `typecheck`, `test`, `build`, E2E bez regresji.
-- [ ] Logiczne commity, np. `style: unify dashboard and kanban tokens`, `fix: make task dialog keyboard accessible`, `style: refine mobile navigation`.
+- [x] Zachowano oryginalny język wizualny, a wskazane ekrany są spójne i funkcjonalne.
+- [x] Brak klikalnych atrap; podstawowe interakcje dostępne z klawiatury i na urządzeniach mobilnych.
+- [x] Testy wizualne lub manualny przegląd z zapisanymi screenami przy ww. rozdzielczościach; `lint`, `typecheck`, `test`, `build`, E2E bez regresji.
+- [x] Logiczne commity, np. `style: unify dashboard and kanban tokens`, `fix: make task dialog keyboard accessible`, `style: refine mobile navigation`.
 
-- [ ] **Bramka etapu 2:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 3 bez odrębnej zgody.
+- [x] **Bramka etapu 2:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 3 bez odrębnej zgody.
 
 ---
 
