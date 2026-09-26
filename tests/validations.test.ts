@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { labelSchema, linkSchema, registerSchema, taskSchema } from "@/lib/validations";
+import { checklistCompletionSchema, checklistItemSchema, labelSchema, linkSchema, registerSchema, taskSchema } from "@/lib/validations";
 
 describe("walidacja danych wejściowych", () => {
   it("normalizuje e-mail i akceptuje mocne hasło", () => {
@@ -10,4 +10,10 @@ describe("walidacja danych wejściowych", () => {
   it("odrzuca protokoły inne niż http i https", () => { expect(linkSchema.safeParse({ title: "Plik", url: "file:///etc/passwd" }).success).toBe(false); });
   it("waliduje kolor etykiety", () => { expect(labelSchema.safeParse({ name: "UI", color: "orange" }).success).toBe(false); });
   it("ustawia wartości domyślne zadania", () => { const result = taskSchema.parse({ title: " Test " }); expect(result.title).toBe("Test"); expect(result.status).toBe("TODO"); expect(result.priority).toBe("MEDIUM"); });
+  it("ogranicza checklistę do 200 znaków treści i jawnego stanu ukończenia", () => {
+    expect(checklistItemSchema.parse({ content: "  Gotowe  " }).content).toBe("Gotowe");
+    expect(checklistItemSchema.safeParse({ content: " " }).success).toBe(false);
+    expect(checklistItemSchema.safeParse({ content: "a".repeat(201) }).success).toBe(false);
+    expect(checklistCompletionSchema.safeParse({ completed: "yes" }).success).toBe(false);
+  });
 });

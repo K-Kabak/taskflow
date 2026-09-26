@@ -6,8 +6,9 @@ import { addCommentAction, addLinkAction, createLabelAction, deleteTaskAction, r
 import { toDateOnly } from "@/lib/date-only";
 import { ConfirmSubmit } from "@/components/shared/confirm-submit";
 import { TaskDialogFrame } from "@/components/tasks/task-dialog-frame";
+import { TaskChecklist } from "@/components/tasks/task-checklist";
 
-type TaskPanelTask = Prisma.TaskGetPayload<{ include: { assignees: true; labels: true; comments: { include: { author: true } }; links: true; activities: { include: { actor: true } } } }>;
+type TaskPanelTask = Prisma.TaskGetPayload<{ include: { assignees: true; labels: true; checklistItems: true; comments: { include: { author: true } }; links: true; activities: { include: { actor: true } } } }>;
 type WorkspaceMemberWithUser = Prisma.WorkspaceMemberGetPayload<{ include: { user: true } }>;
 type TaskPanelProps = { workspaceId: string; projectId: string; view: string; searchParams: { status?: string; priority?: string; assignee?: string; q?: string }; task: TaskPanelTask; members: WorkspaceMemberWithUser[]; labels: Prisma.LabelModel[]; currentUserId: string; role: WorkspaceRole; readOnly: boolean };
 
@@ -31,6 +32,8 @@ export function TaskPanel({ workspaceId, projectId, view, searchParams, task, me
       <fieldset disabled={readOnly}><legend className="mb-2 text-sm font-medium">Etykiety</legend><div className="flex flex-wrap gap-2">{labels.map((label) => <label key={label.id} className="flex min-h-10 items-center gap-2 rounded-xl border border-[var(--border)] px-3 py-2 text-sm"><input type="checkbox" name="labelIds" value={label.id} defaultChecked={task.labels.some((item) => item.labelId === label.id)} /><span className="size-2 rounded-full" style={{ background: label.color }} />{label.name}</label>)}</div></fieldset>
       {!readOnly && <button className="tf-button-primary w-full px-4 py-3">Zapisz zmiany</button>}
     </ActionForm>
+
+    <TaskChecklist workspaceId={workspaceId} taskId={task.id} items={task.checklistItems} readOnly={readOnly} />
 
     {!readOnly && <details className="mt-6 rounded-xl border border-[var(--border)] p-4"><summary className="cursor-pointer font-medium">Nowa etykieta</summary><ActionForm action={createLabelAction.bind(null, workspaceId)} resetOnSuccess successMessage="Dodano etykietę." className="mt-3 grid gap-2 sm:grid-cols-[1fr_auto_auto] sm:items-end"><label className="text-xs font-medium">Nazwa etykiety<input name="name" required maxLength={40} className="tf-input mt-1 w-full" /></label><label className="text-xs font-medium">Kolor<input type="color" name="color" defaultValue="#F97316" className="mt-1 block h-11 w-12" /></label><button className="rounded-lg bg-[#252525] px-3 py-3 text-sm text-white">Dodaj</button></ActionForm></details>}
 

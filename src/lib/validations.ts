@@ -36,6 +36,9 @@ export const taskSchema = z.object({
 
 export const commentSchema = z.object({ body: trimmed(1, 2000, "Komentarz") });
 
+export const checklistItemSchema = z.object({ content: trimmed(1, 200, "Pozycja checklisty") });
+export const checklistCompletionSchema = z.object({ completed: z.enum(["true", "false"]) });
+
 export const linkSchema = z.object({
   title: trimmed(1, 160, "Nazwa linku"),
   url: z.url("Podaj poprawny adres URL.").refine((value) => ["http:", "https:"].includes(new URL(value).protocol), "Dozwolone są tylko adresy HTTP i HTTPS."),
