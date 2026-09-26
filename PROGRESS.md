@@ -21,8 +21,9 @@
 - Trzy migracje przeszły od zera na nowej, lokalnej bazie testowej `taskflow_e2e_stage4`; `migrate status` potwierdził aktualność. **Nie są to migracje Neon.** Baza Neon, projekt Vercel i publiczny URL nie zostały utworzone; GitHub API nie wykazuje deploymentu.
 - Pełna weryfikacja lokalna na izolowanej bazie: `lint`, `typecheck`, **29/29 testów**, `build` OK; Playwright **57 zaliczonych, 7 planowo pominiętych** (3,6 min). Seed działał wyłącznie na lokalnej bazie testowej. Produkcyjnego seeda i E2E na Neon nie uruchamiano.
 - W logu lokalnego `next dev` podczas E2E pojawił się znany z poprzednich etapów komunikat `destination stream closed early` po przerwanej nawigacji, bez niepowodzenia testu. Po wdrożeniu sprawdzić logi Vercel. W CI pozostawiono Chromium; warianty mobilne są w lokalnej pełnej bramce, a ich dołączenie do każdego pushu wydłużyłoby workflow bez nowej ochrony specyficznej dla wdrożenia.
+- GitHub Actions dla checkpointu `0b1a650`: [workflow 36267857442](https://github.com/K-Kabak/taskflow/actions/runs/36267857442) **success**, `quality` i `e2e` OK; Chromium 30 zaliczonych, 2 planowo pominięte. Końcowy commit tej aktualizacji dokumentu wymaga jeszcze osobnej kontroli CI.
 - Nie ma dostępu do kont Neon/Vercel w bieżącym środowisku; po lokalnej bramce jakości potrzebne są działania właściciela opisane w instrukcji. Nie wpisywać sekretów do czatu ani dokumentów.
-- **Punkt wznowienia:** sprawdzić CI dla commita checkpointu, następnie uzyskać od właściciela konfigurację kont i trzy migracje Neon przed publicznym wdrożeniem. Potem rzeczywisty smoke test HTTPS, aktualizacja README i screenshotów, końcowa weryfikacja i raport. Etapu 4 nie oznaczać jako ukończonego do czasu tych potwierdzeń.
+- **Punkt wznowienia:** sprawdzić CI końcowego commita dokumentacyjnego, następnie uzyskać od właściciela konfigurację kont i trzy migracje Neon przed publicznym wdrożeniem. Potem rzeczywisty smoke test HTTPS, aktualizacja README i screenshotów, końcowa weryfikacja i raport. Etapu 4 nie oznaczać jako ukończonego do czasu tych potwierdzeń.
 
 ## Etap 3 — bieżący postęp
 
