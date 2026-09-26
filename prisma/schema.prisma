@@ -38,6 +38,11 @@ enum ActivityAction {
   PROJECT_RESTORED
 }
 
+enum NotificationType {
+  TASK_ASSIGNED
+  COMMENT_ADDED
+}
+
 model User {
   id            String   @id @default(cuid())
   name          String
@@ -57,6 +62,7 @@ model User {
   comments        Comment[]
   taskLinks       TaskLink[]
   activities      Activity[]
+  notifications   Notification[]
 }
 
 model Workspace {
@@ -72,6 +78,7 @@ model Workspace {
   projects   Project[]
   labels     Label[]
   activities Activity[]
+  notifications Notification[]
 
   @@index([ownerId])
 }
@@ -122,6 +129,7 @@ model Project {
   createdBy User      @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: Restrict)
   tasks     Task[]
   activities Activity[]
+  notifications Notification[]
 
   @@index([workspaceId, archivedAt, updatedAt])
 }
@@ -147,6 +155,7 @@ model Task {
   links       TaskLink[]
   activities  Activity[]
   checklistItems TaskChecklistItem[]
+  notifications Notification[]
 
   @@index([projectId, status, position])
   @@index([dueDate])
@@ -247,6 +256,27 @@ model Activity {
   @@index([workspaceId, createdAt])
   @@index([projectId, createdAt])
   @@index([taskId, createdAt])
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  workspaceId String
+  userId      String
+  type        NotificationType
+  taskId      String?
+  projectId   String?
+  message     String
+  eventKey    String           @unique
+  createdAt   DateTime         @default(now())
+  readAt      DateTime?
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task      Task?     @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, userId, createdAt])
+  @@index([workspaceId, userId, readAt])
 }
 
 model RateLimitBucket {
