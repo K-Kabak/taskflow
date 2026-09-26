@@ -10,11 +10,11 @@ import { TaskChecklist } from "@/components/tasks/task-checklist";
 
 type TaskPanelTask = Prisma.TaskGetPayload<{ include: { assignees: true; labels: true; checklistItems: true; comments: { include: { author: true } }; links: true; activities: { include: { actor: true } } } }>;
 type WorkspaceMemberWithUser = Prisma.WorkspaceMemberGetPayload<{ include: { user: true } }>;
-type TaskPanelProps = { workspaceId: string; projectId: string; view: string; searchParams: { status?: string; priority?: string; assignee?: string; q?: string }; task: TaskPanelTask; members: WorkspaceMemberWithUser[]; labels: Prisma.LabelModel[]; currentUserId: string; role: WorkspaceRole; readOnly: boolean };
+type TaskPanelProps = { workspaceId: string; projectId: string; view: string; boardFilterQuery: string; searchParams: { status?: string; priority?: string; assignee?: string; q?: string }; task: TaskPanelTask; members: WorkspaceMemberWithUser[]; labels: Prisma.LabelModel[]; currentUserId: string; role: WorkspaceRole; readOnly: boolean };
 
-export function TaskPanel({ workspaceId, projectId, view, searchParams, task, members, labels, currentUserId, role, readOnly }: TaskPanelProps) {
+export function TaskPanel({ workspaceId, projectId, view, boardFilterQuery, searchParams, task, members, labels, currentUserId, role, readOnly }: TaskPanelProps) {
   const canDelete = task.createdById === currentUserId || ["OWNER", "ADMIN"].includes(role);
-  const query = new URLSearchParams();
+  const query = new URLSearchParams(view === "board" ? boardFilterQuery : "");
   if (view !== "board") query.set("view", view);
   if (view === "list") for (const key of ["status", "priority", "assignee", "q"] as const) if (searchParams[key]) query.set(key, searchParams[key]);
   const returnHref = `/w/${workspaceId}/projects/${projectId}${query.size ? `?${query}` : ""}`;
