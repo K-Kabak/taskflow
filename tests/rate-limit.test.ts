@@ -9,7 +9,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("next/headers", () => ({ headers: async () => request.headers }));
 
 const { db } = await import("@/lib/db");
-const { consumeRateLimit } = await import("@/lib/rate-limit");
+const { consumeClientIpRateLimit, consumeRateLimit } = await import("@/lib/rate-limit");
 
 const originalVercel = process.env.VERCEL;
 afterAll(async () => {
@@ -54,6 +54,36 @@ describe("rate limit PostgreSQL", () => {
       expect((await consumeRateLimit({ scope, identifier, limit: 1, windowMs: 60_000 })).allowed).toBe(false);
     } finally {
       await db.rateLimitBucket.deleteMany({ where: { key } });
+    }
+  });
+
+  it("ogranicza próby z jednego adresu Vercel niezależnie od zmiany e-maila", async () => {
+    process.env.VERCEL = "1";
+    const scope = `test-ip-${randomUUID()}`;
+    const ip = "192.0.2.30";
+    const secret = process.env.RATE_LIMIT_SECRET || process.env.NEXTAUTH_SECRET;
+    if (!secret) throw new Error("Brak sekretu testowego.");
+    const key = createHmac("sha256", secret).update(`${scope}:${ip}:${ip}`).digest("hex");
+    const cleanup = vi.spyOn(db.rateLimitBucket, "deleteMany").mockResolvedValue({ count: 0 });
+    try {
+      request.headers = new Headers({ "x-vercel-forwarded-for": ip, "x-forwarded-for": "198.51.100.1" });
+      expect((await consumeClientIpRateLimit({ scope, limit: 1, windowMs: 60_000 })).allowed).toBe(true);
+      expect((await consumeClientIpRateLimit({ scope, limit: 1, windowMs: 60_000 })).allowed).toBe(false);
+      expect(cleanup).toHaveBeenCalledWith({ where: { expiresAt: { lt: expect.any(Date) } } });
+    } finally {
+      cleanup.mockRestore();
+      await db.rateLimitBucket.deleteMany({ where: { key } });
+      delete process.env.VERCEL;
+    }
+  });
+
+  it("nie ufa nagłówkowi X-Forwarded-For bez nagłówka Vercel", async () => {
+    process.env.VERCEL = "1";
+    request.headers = new Headers({ "x-forwarded-for": "192.0.2.31" });
+    try {
+      expect((await consumeClientIpRateLimit({ scope: "test", limit: 1, windowMs: 60_000 })).allowed).toBe(true);
+    } finally {
+      delete process.env.VERCEL;
     }
   });
 });

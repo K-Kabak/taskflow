@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { verify } from "@node-rs/argon2";
 import { db } from "@/lib/db";
 import { loginSchema } from "@/lib/validations";
-import { consumeRateLimit } from "@/lib/rate-limit";
+import { consumeClientIpRateLimit, consumeRateLimit } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   session: { strategy: "jwt", maxAge: 30 * 24 * 60 * 60 },
@@ -15,6 +15,8 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         const parsed = loginSchema.safeParse(credentials);
         if (!parsed.success) return null;
+        const ipLimit = await consumeClientIpRateLimit({ scope: "login-ip", limit: 30, windowMs: 15 * 60_000 });
+        if (!ipLimit.allowed) return null;
         const limit = await consumeRateLimit({ scope: "login", identifier: parsed.data.email, limit: 10, windowMs: 15 * 60_000 });
         if (!limit.allowed) return null;
         const user = await db.user.findUnique({ where: { email: parsed.data.email } });

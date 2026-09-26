@@ -3,12 +3,14 @@
 import { hash } from "@node-rs/argon2";
 import { db } from "@/lib/db";
 import { actionError, type ActionResult } from "@/lib/action-result";
-import { consumeRateLimit } from "@/lib/rate-limit";
+import { consumeClientIpRateLimit, consumeRateLimit } from "@/lib/rate-limit";
 import { registerSchema } from "@/lib/validations";
 
 export async function registerAction(input: unknown): Promise<ActionResult<{ email: string; workspaceId: string }>> {
   const parsed = registerSchema.safeParse(input);
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw zaznaczone pola.", parsed.error.flatten().fieldErrors);
+  const ipLimit = await consumeClientIpRateLimit({ scope: "register-ip", limit: 10, windowMs: 60 * 60_000 });
+  if (!ipLimit.allowed) return actionError("RATE_LIMITED", `Spróbuj ponownie za ${ipLimit.retryAfterSeconds} s.`);
   const limit = await consumeRateLimit({ scope: "register", identifier: parsed.data.email, limit: 20, windowMs: 15 * 60_000 });
   if (!limit.allowed) return actionError("RATE_LIMITED", `Spróbuj ponownie za ${limit.retryAfterSeconds} s.`);
 
