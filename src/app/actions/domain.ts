@@ -8,6 +8,7 @@ import { DomainError, requireProjectAccess, requireTaskAccess, requireWorkspaceM
 import { commentSchema, labelSchema, linkSchema, moveTaskSchema, projectSchema, roleSchema, taskSchema, workspaceSchema } from "@/lib/validations";
 import { parseDateOnly } from "@/lib/date-only";
 import { consumeRateLimit } from "@/lib/rate-limit";
+import { publicBaseUrl } from "@/lib/public-url";
 import { actionError, type ActionResult } from "@/lib/action-result";
 import { canDeleteTask, canRemoveMember } from "@/lib/access-policy";
 import { commentRecipients, newlyAssignedRecipients } from "@/lib/notification-recipients";
@@ -228,12 +229,12 @@ export async function removeLinkAction(workspaceId: string, linkId: string) {
 
 export async function createInviteAction(workspaceId: string): Promise<ActionResult<{ url: string }>> {
   const { session } = await requireWorkspaceRole(workspaceId, ["OWNER", "ADMIN"]);
+  const baseUrl = publicBaseUrl();
   const limit = await consumeRateLimit({ scope: "invite-create", identifier: session.user.id, limit: 10, windowMs: 60 * 60_000 });
   if (!limit.allowed) return { ok: false, code: "RATE_LIMITED", message: "Limit zaproszeń został osiągnięty." };
   const token = randomBytes(32).toString("base64url");
   const tokenHash = createHash("sha256").update(token).digest("hex");
   await db.workspaceInvite.create({ data: { workspaceId, createdById: session.user.id, tokenHash, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60_000) } });
-  const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   revalidatePath(`/w/${workspaceId}/team`);
   return { ok: true, data: { url: `${baseUrl}/invite/${token}` } };
 }
