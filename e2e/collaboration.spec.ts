@@ -38,6 +38,7 @@ test("przeciągnięcie karty zapisuje nowy status", async ({ page }, testInfo) =
   const card = page.getByText("Audyt obecnej strony").locator("xpath=ancestor::article");
   const handle = card.getByRole("button", { name: /Przenieś zadanie/ });
   const target = page.locator("section").filter({ has: page.getByRole("heading", { name: "W trakcie" }) }).first();
+  await handle.scrollIntoViewIfNeeded();
   const from = await handle.boundingBox(); const to = await target.boundingBox();
   expect(from).not.toBeNull(); expect(to).not.toBeNull();
   await page.mouse.move(from!.x + from!.width / 2, from!.y + from!.height / 2);

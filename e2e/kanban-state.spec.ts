@@ -37,6 +37,7 @@ test("nieudany zapis ruchu przywraca kartę i pokazuje błąd", async ({ page })
   const card = page.getByText("Treści strony głównej").locator("xpath=ancestor::article");
   const handle = card.getByRole("button", { name: /Przenieś zadanie/ });
   const target = page.locator("section").filter({ has: page.getByRole("heading", { name: "W trakcie" }) }).first();
+  await handle.scrollIntoViewIfNeeded();
   const from = await handle.boundingBox();
   const to = await target.boundingBox();
   expect(from).not.toBeNull();

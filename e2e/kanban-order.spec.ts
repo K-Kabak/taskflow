@@ -26,7 +26,9 @@ async function login(page: Page) {
 async function dragBefore(page: Page, movingId: string, targetId: string) {
   const moving = page.locator(`a[href*="task=${movingId}"]`).locator("xpath=ancestor::article");
   const target = page.locator(`a[href*="task=${targetId}"]`).locator("xpath=ancestor::article");
-  const from = await moving.getByRole("button", { name: /Przenieś zadanie/ }).boundingBox();
+  const handle = moving.getByRole("button", { name: /Przenieś zadanie/ });
+  await handle.scrollIntoViewIfNeeded();
+  const from = await handle.boundingBox();
   const to = await target.boundingBox();
   expect(from).not.toBeNull();
   expect(to).not.toBeNull();
