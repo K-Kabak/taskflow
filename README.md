@@ -103,8 +103,10 @@ pnpm start
 
 Do wdrożenia wystarczy hosting obsługujący Next.js/Node 24 oraz zarządzany PostgreSQL. Należy ustawić wszystkie sekrety w panelu hostingu, wymusić HTTPS i nie uruchamiać demonstracyjnego seeda.
 
-## Zakres i ograniczenia MVP
+## Rozszerzenia v1.1 i ograniczenia
 
-TaskFlow nie implementuje czatu, powiadomień, uploadu plików, odzyskiwania hasła, płatności, integracji zewnętrznych, realtime ani trybu offline. Kolejne przestrzenie uzyskuje się przez przyjęcie zaproszenia; MVP nie zawiera osobnego kreatora wielu przestrzeni.
+Etap 3 dodał checklisty w zadaniach, filtry tablicy Kanban zapisane w URL, powiadomienia wewnątrz aplikacji o przypisaniach i komentarzach oraz statystyki projektów i dashboardu liczone z bazy. [Pięć aktualnych zrzutów ekranu](./docs/screenshots/v1.1-stage3/) pokazuje działające funkcje na danych testowych. [Definicje metryk](./docs/quality/STAGE3_METRICS.md) opisują zakres, terminy i projekty archiwalne.
+
+TaskFlow nie implementuje czatu, powiadomień push/e-mail, uploadu plików, odzyskiwania hasła, płatności, integracji zewnętrznych, realtime ani trybu offline. Kolejne przestrzenie uzyskuje się przez przyjęcie zaproszenia; aplikacja nie ma osobnego kreatora wielu przestrzeni. Publiczne demo i hosting pozostają zadaniem Etapu 4.
 
 Szczegółowy stan etapów znajduje się w [ROADMAP.md](./ROADMAP.md), a pełna specyfikacja w [TASKFLOW_AGENT_SPEC.md](./TASKFLOW_AGENT_SPEC.md).

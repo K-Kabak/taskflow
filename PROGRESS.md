@@ -3,7 +3,7 @@
 ## Aktualny etap i zgoda użytkownika
 
 - Autoryzowany etap: **3 — cztery funkcjonalności TaskFlow v1.1**.
-- Status: **w trakcie**. Punktem wyjścia jest ukończony Etap 2 (`bf21141`).
+- Status: **Etap 3 ukończony lokalnie i opublikowany**. Punktem wyjścia był ukończony Etap 2 (`bf21141`).
 - Zgoda: polecenie użytkownika z 2026-09-26 na realizację wyłącznie Etapu 3.
 - Etapu 4, hostingu i deploymentu nie rozpoczynać bez nowej, wyraźnej zgody.
 
@@ -19,12 +19,16 @@
 | Addytywny model powiadomień i migracja | `migrate deploy` i `migrate status` na odizolowanej bazie `taskflow_e2e_stage2`, `prisma generate`, `typecheck` OK | `6f8939f` | tak |
 | Zdarzenia przypisania i komentarza, odbiorcy, deduplikacja | 2 testy jednostkowe, E2E przypisania, komentarza i ponownego zapisu, `lint`, `typecheck` OK | `bc4f4c8` | tak |
 | Skrzynka powiadomień, licznik i odczyt tylko własnych rekordów | 2 E2E: licznik, oznaczenie przeczytania, izolacja odbiorcy i przestrzeni; `lint`, `typecheck` OK | `ebb246f` | tak |
+| Statystyki projektu i dashboardu z realnych danych | 2 testy agregacji, E2E na desktopie i telefonie: izolacja przestrzeni, zero danych, 50% i zaległości; `lint`, `typecheck` OK | `747bce6` | tak |
+| Pięć rzeczywistych zrzutów czterech funkcji | Playwright na odizolowanej bazie, wynik 1/1 | `698a748` | tak |
+| Dostosowanie testów DnD do układu z metrykami | 10 E2E zaliczonych, 2 planowo pominięte w docelowych plikach | `16d2a38` | tak |
 
 - `PLAN.md` nie ma lokalnie; zakres opiera się na `TASKFLOW_V1_1_ROADMAP.md`, specyfikacji, raportach jakości i aktualnym kodzie.
-- Następny krok: statystyki projektów i dashboardu oparte na rzeczywistych danych bieżącej przestrzeni. Potem świeże screenshoty i pełna bramka Etapu 3.
-- Migracja działała na testowej bazie z danymi. Nie wykonano resetu ani operacji destrukcyjnej na bazie użytkownika.
-- Pełna bramka `lint`, `typecheck`, testy, build i E2E oraz nowe screenshoty zostaną wykonane na końcu Etapu 3.
-- **Punkt wznowienia:** `main` po `ebb246f`; sprawdzić `git status -sb` i `origin/main`, następnie kontynuować statystyki. Nie rozpoczynać Etapu 4.
+- Migracje checklisty i powiadomień są addytywne. Migracja powiadomień przeszła na istniejącej izolowanej bazie; trzy migracje przeszły też od zera na `taskflow_e2e_stage3final`, po czym seed i `migrate status` zakończyły się poprawnie. Nie wykonano resetu ani operacji destrukcyjnej na bazie użytkownika.
+- Pełna bramka po kodzie Etapu 3: `pnpm lint` OK, `pnpm typecheck` OK, `pnpm test` **25/25 w 8 plikach**, `pnpm build` OK, Playwright na świeżej `taskflow_e2e_stage3final` **57 zaliczonych, 7 planowo pominiętych**. Pierwszy pełny Playwright ujawnił 7 niepowodzeń starszych testów DnD z powodu karty poza viewportem po dodaniu metryk; testy przewijają teraz uchwyt do widoku i pełny przebieg zakończył się sukcesem.
+- Pięć nowych zrzutów: `docs/screenshots/v1.1-stage3/` (checklista, filtry Kanbanu, skrzynka powiadomień, metryki projektu i dashboardu). Definicje liczników: `docs/quality/STAGE3_METRICS.md`.
+- Ryzyka: licznik powiadomień aktualizuje się przy odświeżeniu/nawigacji, bez realtime zgodnie z zakresem; gest DnD i wygląd natywnych kontrolek warto sprawdzić na fizycznym telefonie. Sporadyczne `destination stream closed early` w lokalnym `next dev` przy przerywanej nawigacji nie powodowało niepowodzenia końcowego E2E.
+- **Punkt wznowienia:** po końcowym commicie dokumentacyjnym sprawdzić `git status -sb`, synchronizację z `origin/main` i GitHub Actions. **STOP przed Etapem 4; hosting i deployment wymagają nowej, wyraźnej zgody.**
 
 ## Etap 2 — wykonane jednostki i commity
 

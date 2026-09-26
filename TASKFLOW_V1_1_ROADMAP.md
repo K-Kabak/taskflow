@@ -108,7 +108,7 @@ Pliki do przeglądu: `src/components/tasks/kanban-board.tsx`, `src/app/actions/d
 - [x] Zweryfikuj aktualizowanie lokalnego stanu kart po zmianach serwerowych. Obecny komponent inicjuje stan przez `useState(initialTasks)`, a klucz zewnętrzny opiera się na identyfikatorach i statusach; sprawdź scenariusze zmiany **tytułu, terminu, etykiet, przypisań i samej kolejności** bez zmiany statusu.
 - [x] Zapewnij przewidywalny stan po zapisie, błędzie, odświeżeniu, szybkich kolejnych gestach i zmianie widoku; nie dopuść do wyświetlania przestarzałych danych.
 - [x] Sprawdź równoczesne przenoszenie kart. Zastosuj bezpieczną transakcję i adekwatną obsługę konfliktów/ponowienia operacji; nie zgub kolejności i nie nadpisuj zmian bez komunikatu.
-- [ ] Dla filtrowanej tablicy w późniejszym etapie 3 nie pozwól, by przeniesienie karty przypadkowo przestawiało ukryte zadania.
+- [x] Dla filtrowanej tablicy w późniejszym etapie 3 nie pozwól, by przeniesienie karty przypadkowo przestawiało ukryte zadania.
 - [x] Rozszerz E2E o przeładowanie po DnD, odwrócenie zmiany po niepowodzeniu, sortowanie w obrębie kolumny i edycję danych karty.
 
 ### 1.3 Obsługa formularzy i błędów
@@ -198,43 +198,45 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 
 # ETAP 3 — TaskFlow v1.1: wybrane funkcje
 
+**Status: ukończony 2026-09-26.** Weryfikacja: 25 testów jednostkowych, 57 E2E zaliczonych, 7 planowo pominiętych, lint/typecheck/build OK. Szczegóły w `PROGRESS.md` i `docs/quality/STAGE3_METRICS.md`; zrzuty w `docs/screenshots/v1.1-stage3/`. Etap 4 wymaga osobnej zgody.
+
 **Cel:** dołożyć dokładnie cztery użyteczne funkcje. Ta sekcja jest **jawnym rozszerzeniem** wcześniejszego MVP, nie poleceniem realizacji wszystkich pomysłów z oryginalnego zrzutu. Wciąż poza zakresem: płatności, czat, upload plików, realtime, AI, zewnętrzne integracje, wysyłka e-mail/push i osobna aplikacja mobilna.
 
 ### 3.1 Podzadania / checklista w zadaniu
 
-- [ ] Dodaj model Prisma `TaskChecklistItem` (lub równoważny): identyfikator, `taskId`, treść, pozycja, znacznik ukończenia, daty; indeks po zadaniu i pozycji. Migracja bez utraty istniejących zadań.
-- [ ] Dodawanie, edycja, oznaczanie i usuwanie pozycji z walidacją długości/limitu; sprawdzenie uprawnień do zadania i stanu archiwizacji **na serwerze**.
-- [ ] Postęp `ukończone / wszystkie` w panelu zadania, opcjonalnie dyskretny wskaźnik na karcie. Nie pokazuj `0/0` jako pozornego postępu.
-- [ ] Testy jednostkowe i E2E tworzenia, przeładowania, braku dostępu i zarchiwizowanego projektu.
+- [x] Dodaj model Prisma `TaskChecklistItem` (lub równoważny): identyfikator, `taskId`, treść, pozycja, znacznik ukończenia, daty; indeks po zadaniu i pozycji. Migracja bez utraty istniejących zadań.
+- [x] Dodawanie, edycja, oznaczanie i usuwanie pozycji z walidacją długości/limitu; sprawdzenie uprawnień do zadania i stanu archiwizacji **na serwerze**.
+- [x] Postęp `ukończone / wszystkie` w panelu zadania, opcjonalnie dyskretny wskaźnik na karcie. Nie pokazuj `0/0` jako pozornego postępu.
+- [x] Testy jednostkowe i E2E tworzenia, przeładowania, braku dostępu i zarchiwizowanego projektu.
 
 ### 3.2 Filtrowanie bezpośrednio na tablicy Kanban
 
-- [ ] Przenieś użyteczność filtrów znaną z widoku listy na tablicę: tekst, priorytet, przypisana osoba, etykieta, zakres/stan terminu. Zastosuj nazwy filtrów zrozumiałe po polsku.
-- [ ] Utrzymuj stan w parametrach URL, aby można było odświeżyć i udostępnić widok; oferuj „Wyczyść filtry” i liczbę aktywnych filtrów.
-- [ ] DnD przy aktywnych filtrach: jawnie wybierz i zaimplementuj bezpieczną regułę — np. zablokuj ręczne przestawianie kolejności z czytelną informacją, pozwalając na zmianę statusu przez edycję. **Nigdy** nie wyliczaj nowej globalnej kolejności wyłącznie z przefiltrowanej listy.
-- [ ] Puste wyniki powinny komunikować, że to rezultat filtrów, a nie brak zadań w projekcie. Testy URL, filtrów i DnD.
+- [x] Przenieś użyteczność filtrów znaną z widoku listy na tablicę: tekst, priorytet, przypisana osoba, etykieta, zakres/stan terminu. Zastosuj nazwy filtrów zrozumiałe po polsku.
+- [x] Utrzymuj stan w parametrach URL, aby można było odświeżyć i udostępnić widok; oferuj „Wyczyść filtry” i liczbę aktywnych filtrów.
+- [x] DnD przy aktywnych filtrach: jawnie wybierz i zaimplementuj bezpieczną regułę — np. zablokuj ręczne przestawianie kolejności z czytelną informacją, pozwalając na zmianę statusu przez edycję. **Nigdy** nie wyliczaj nowej globalnej kolejności wyłącznie z przefiltrowanej listy.
+- [x] Puste wyniki powinny komunikować, że to rezultat filtrów, a nie brak zadań w projekcie. Testy URL, filtrów i DnD.
 
 ### 3.3 Centrum powiadomień w aplikacji (bez maili i realtime)
 
-- [ ] Dodaj rekordy powiadomień dla użytkownika w danej przestrzeni: `userId`, `workspaceId`, typ, opcjonalne powiązanie z zadaniem/projektem, czytelny opis, `createdAt`, `readAt`, opcjonalny klucz zdarzenia zapobiegający duplikatom.
-- [ ] Zdarzenia: przypisanie do zadania, nowy komentarz w zadaniu przypisanym do użytkownika, opcjonalnie termin zbliżający się w nadchodzących dniach przy kontrolowanym sposobie generowania. Nie wysyłaj powiadomienia do autora własnej czynności.
-- [ ] Panel dzwonka/strona powiadomień: licznik nieprzeczytanych, lista, przejście do zadania, oznaczenie jako przeczytane. Zwykłe odświeżenie strony jest wystarczające; nie udawaj działania realtime.
-- [ ] Waliduj odbiorcę i workspace po stronie serwera. Testy izolacji odbiorców i idempotencji powiadomień.
+- [x] Dodaj rekordy powiadomień dla użytkownika w danej przestrzeni: `userId`, `workspaceId`, typ, opcjonalne powiązanie z zadaniem/projektem, czytelny opis, `createdAt`, `readAt`, opcjonalny klucz zdarzenia zapobiegający duplikatom.
+- [x] Zdarzenia: przypisanie do zadania, nowy komentarz w zadaniu przypisanym do użytkownika, opcjonalnie termin zbliżający się w nadchodzących dniach przy kontrolowanym sposobie generowania. Nie wysyłaj powiadomienia do autora własnej czynności.
+- [x] Panel dzwonka/strona powiadomień: licznik nieprzeczytanych, lista, przejście do zadania, oznaczenie jako przeczytane. Zwykłe odświeżenie strony jest wystarczające; nie udawaj działania realtime.
+- [x] Waliduj odbiorcę i workspace po stronie serwera. Testy izolacji odbiorców i idempotencji powiadomień.
 
 ### 3.4 Statystyki projektów i dashboard
 
-- [ ] Pokaż wyłącznie metryki wyliczane z bazy w bieżącej przestrzeni: liczba zadań wg statusu, udział ukończonych, zadania po terminie, ostatnia aktywność; ewentualnie trend w ustalonym oknie czasowym na podstawie danych, które faktycznie istnieją.
-- [ ] Dodaj prosty wykres/paski postępu (bez rozbudowanej biblioteki, jeśli CSS/SVG wystarczy). Udokumentuj definicje metryk: mianownik, daty, czy zarchiwizowane projekty są wyłączone.
-- [ ] Obsłuż zero danych i małe ekrany; nie twórz fałszywych KPI z koncepcji. Testy agregacji oraz ograniczenia do `workspaceId`.
+- [x] Pokaż wyłącznie metryki wyliczane z bazy w bieżącej przestrzeni: liczba zadań wg statusu, udział ukończonych, zadania po terminie, ostatnia aktywność; ewentualnie trend w ustalonym oknie czasowym na podstawie danych, które faktycznie istnieją.
+- [x] Dodaj prosty wykres/paski postępu (bez rozbudowanej biblioteki, jeśli CSS/SVG wystarczy). Udokumentuj definicje metryk: mianownik, daty, czy zarchiwizowane projekty są wyłączone.
+- [x] Obsłuż zero danych i małe ekrany; nie twórz fałszywych KPI z koncepcji. Testy agregacji oraz ograniczenia do `workspaceId`.
 
 ### Kryteria odbioru etapu 3
 
-- [ ] Migracja działa od obecnej bazy; wszystkie nowe operacje mają walidację, autoryzację i sensowne błędy.
-- [ ] Nowe funkcje działają po odświeżeniu i mają automatyczne testy pozytywne i negatywne.
-- [ ] Ekrany etapu 2 zostały uzupełnione realnymi funkcjami z etapu 3; screenshoty są ponownie wykonane na aktualnej wersji.
-- [ ] Osobne logiczne commity, np. `feat: add task checklist`, `feat: filter kanban board`, `feat: add in-app notifications`, `feat: show workspace progress metrics`.
+- [x] Migracja działa od obecnej bazy; wszystkie nowe operacje mają walidację, autoryzację i sensowne błędy.
+- [x] Nowe funkcje działają po odświeżeniu i mają automatyczne testy pozytywne i negatywne.
+- [x] Ekrany etapu 2 zostały uzupełnione realnymi funkcjami z etapu 3; screenshoty są ponownie wykonane na aktualnej wersji.
+- [x] Osobne logiczne commity, np. `feat: add task checklist`, `feat: filter kanban board`, `feat: add in-app notifications`, `feat: show workspace progress metrics`.
 
-- [ ] **Bramka etapu 3:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 4 bez odrębnej zgody.
+- [x] **Bramka etapu 3:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu 4 bez odrębnej zgody.
 
 ---
 
@@ -288,8 +290,8 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 ## Definition of Done całej wersji v1.1
 
 - [x] Etap 1: naprawione potwierdzone problemy, rzetelny raport i testy regresyjne.
-- [ ] Etap 2: spójne, dostępne UI na desktopie i telefonie; nowe rzeczywiste screenshoty.
-- [ ] Etap 3: checklisty, filtry Kanbanu, powiadomienia w aplikacji, statystyki — z migracjami i testami.
+- [x] Etap 2: spójne, dostępne UI na desktopie i telefonie; nowe rzeczywiste screenshoty.
+- [x] Etap 3: checklisty, filtry Kanbanu, powiadomienia w aplikacji, statystyki — z migracjami i testami.
 - [ ] Etap 4: działające bezpieczne demo HTTPS, aktualne README i zielone CI.
 - [ ] Brak sekretów w repo, brak atrap funkcjonalności, brak utraty danych z dotychczasowego MVP.
 - [ ] W repo widać osobne logiczne commity dla faktycznych zmian v1.1 oraz aktualny stan `ROADMAP_V1_1.md`/`PROGRESS.md`.

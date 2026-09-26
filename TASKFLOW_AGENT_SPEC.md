@@ -5,6 +5,8 @@
 **Typ projektu:** pełnostackowa, responsywna aplikacja webowa SaaS do zarządzania projektami i zadaniami  
 **Cel:** stworzenie od zera działającego, estetycznego projektu do portfolio GitHub, a nie samego prototypu interfejsu.
 
+**Status dokumentu:** poniższy opis zachowuje historyczny zakres i instrukcje budowy MVP. Dla istniejącego projektu TaskFlow v1.1 obowiązują nowszy `TASKFLOW_V1_1_ROADMAP.md` i zgody użytkownika na poszczególne etapy. W Etapie 3 do MVP dodano checklisty, filtry Kanbanu, powiadomienia wewnątrz aplikacji oraz rzeczywiste statystyki; zakazy dotyczące powiadomień push/e-mail i realtime nadal obowiązują. Nie tworzyć ponownie projektu ani repozytorium.
+
 > **Instrukcja nadrzędna dla agenta:** potraktuj ten plik jako specyfikację implementacyjną. Samodzielnie zaprojektuj strukturę repozytorium, zaimplementuj aplikację, przygotuj bazę danych, testy, dokumentację i uruchom ją lokalnie. Nie kończ pracy po przygotowaniu makiety ani po pojedynczym etapie roadmapy: kontynuuj samodzielnie aż do spełnienia Definition of Done. Załóż nowe publiczne repozytorium GitHub `taskflow` na poprawnym koncie użytkownika i regularnie publikuj sprawdzone commity zgodnie z sekcją 15. Jeśli drobny szczegół nie został opisany, wybierz najprostsze spójne rozwiązanie i odnotuj decyzję w README. Nie rozszerzaj samowolnie zakresu o funkcje z sekcji „Poza MVP”.
 
 ## 1. Materiały i charakter wizualny
