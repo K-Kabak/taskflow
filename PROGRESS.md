@@ -2,10 +2,27 @@
 
 ## Aktualny etap i zgoda użytkownika
 
-- Autoryzowany etap: **3 — cztery funkcjonalności TaskFlow v1.1**.
-- Status: **Etap 3 ukończony lokalnie i opublikowany**. Punktem wyjścia był ukończony Etap 2 (`bf21141`).
-- Zgoda: polecenie użytkownika z 2026-09-26 na realizację wyłącznie Etapu 3.
-- Etapu 4, hostingu i deploymentu nie rozpoczynać bez nowej, wyraźnej zgody.
+- Autoryzowany etap: **4 — deployment i portfolio TaskFlow v1.1**.
+- Status: **Etap 4 w toku; publiczny deployment nie istnieje i nie został zweryfikowany**. Punktem wyjścia był ukończony Etap 3 (`fd29973`).
+- Zgoda: polecenie użytkownika z 2026-09-26 na realizację wyłącznie Etapu 4, na darmowych planach Vercel i Neon; osobna zgoda wymagana przed tagiem/GitHub Release.
+- `PLAN.md` nie istnieje lokalnie. Nie rozpoczynać kolejnego wydania ani płatnych usług.
+
+## Etap 4 — bieżący postęp
+
+| Jednostka | Weryfikacja | Commit | Push |
+| --- | --- | --- | --- |
+| Limity auth po zweryfikowanym IP Vercel i okresowe usuwanie wygasłych kubełków | 4 testy rate limitu, lint, typecheck na izolowanej `taskflow_e2e_stage4` | `a74a3cc` | tak |
+| Osobny adres direct dla migracji i generowanie klienta Prisma w buildzie | `migrate status` użył `DIRECT_URL` mimo błędnego runtime URL; produkcyjny build OK | `8f24977` | tak |
+| Odmowa tworzenia produkcyjnych linków zaproszeń bez poprawnego HTTPS origin | 2 testy, lint, typecheck OK | `496a3c7` | tak |
+| Wersja pakietu `1.1.0` | `pnpm pkg get version`; lockfile bez zmian po `pnpm install --lockfile-only --ignore-scripts` | `70a4996` | tak |
+| Instrukcja wdrożenia Neon/Vercel i ignorowanie lokalnych danych Vercel | Kontrola diff; instrukcja nie zawiera sekretów | `625397a` | tak |
+
+- Wymagania Node.js 24, pnpm 12, Next.js 16 i Prisma 7 zestawiono z aktualnymi dokumentami Vercel/Prisma. Dla Vercel potrzebne `ENABLE_EXPERIMENTAL_COREPACK=1`; `DATABASE_URL` ma wskazywać pooled Neon, a `DIRECT_URL` direct Neon. Procedura: `docs/deployment/VERCEL_NEON_V1_1.md`.
+- Trzy migracje przeszły od zera na nowej, lokalnej bazie testowej `taskflow_e2e_stage4`; `migrate status` potwierdził aktualność. **Nie są to migracje Neon.** Baza Neon, projekt Vercel i publiczny URL nie zostały utworzone; GitHub API nie wykazuje deploymentu.
+- Pełna weryfikacja lokalna na izolowanej bazie: `lint`, `typecheck`, **29/29 testów**, `build` OK; Playwright **57 zaliczonych, 7 planowo pominiętych** (3,6 min). Seed działał wyłącznie na lokalnej bazie testowej. Produkcyjnego seeda i E2E na Neon nie uruchamiano.
+- W logu lokalnego `next dev` podczas E2E pojawił się znany z poprzednich etapów komunikat `destination stream closed early` po przerwanej nawigacji, bez niepowodzenia testu. Po wdrożeniu sprawdzić logi Vercel. W CI pozostawiono Chromium; warianty mobilne są w lokalnej pełnej bramce, a ich dołączenie do każdego pushu wydłużyłoby workflow bez nowej ochrony specyficznej dla wdrożenia.
+- Nie ma dostępu do kont Neon/Vercel w bieżącym środowisku; po lokalnej bramce jakości potrzebne są działania właściciela opisane w instrukcji. Nie wpisywać sekretów do czatu ani dokumentów.
+- **Punkt wznowienia:** sprawdzić CI dla commita checkpointu, następnie uzyskać od właściciela konfigurację kont i trzy migracje Neon przed publicznym wdrożeniem. Potem rzeczywisty smoke test HTTPS, aktualizacja README i screenshotów, końcowa weryfikacja i raport. Etapu 4 nie oznaczać jako ukończonego do czasu tych potwierdzeń.
 
 ## Etap 3 — bieżący postęp
 

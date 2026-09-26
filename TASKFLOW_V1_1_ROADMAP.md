@@ -246,10 +246,10 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 
 ### 4.1 Gotowość wdrożeniowa
 
-- [ ] Sprawdź zgodność wymagań aktualnego `package.json` (Node/pnpm/Next/Prisma) z hostingiem. Sensowny wariant: hosting Next.js/Node oraz zarządzany PostgreSQL (np. Vercel + Neon), ale wybór usług i koszty uzgodnij z użytkownikiem przed tworzeniem płatnych zasobów.
+- [x] Sprawdź zgodność wymagań aktualnego `package.json` (Node/pnpm/Next/Prisma) z hostingiem. Wybrano darmowe Vercel + Neon za zgodą użytkownika; konfiguracja i źródła: `docs/deployment/VERCEL_NEON_V1_1.md`.
 - [ ] Ustaw sekrety wyłącznie w ustawieniach hostingu (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `RATE_LIMIT_SECRET` zgodnie z kodem); użyj prawidłowego adresu HTTPS. Nie kopiuj lokalnych sekretów do repo ani dokumentu.
 - [ ] Stosuj `prisma migrate deploy` w przewidywalnym kroku wdrożenia, bez resetu produkcyjnej bazy. Sprawdź adapter PostgreSQL, połączenia i wymagania ewentualnego poolingu w docelowym środowisku.
-- [ ] Zadbaj o ochronę przed nadużyciami oraz zaufane nagłówki proxy w nowym środowisku. Wyłącz niepotrzebne verbose logowanie danych wrażliwych.
+- [x] Zadbaj o ochronę przed nadużyciami oraz zaufane nagłówki proxy w nowym środowisku. Limity IP z nagłówka Vercel i usuwanie wygasłych wpisów przetestowano lokalnie (`a74a3cc`); rzeczywista kontrola po deploymencie pozostaje w sekcji odbioru.
 
 ### 4.2 Demo i konta testowe
 
