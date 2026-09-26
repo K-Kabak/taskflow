@@ -146,6 +146,7 @@ model Task {
   comments    Comment[]
   links       TaskLink[]
   activities  Activity[]
+  checklistItems TaskChecklistItem[]
 
   @@index([projectId, status, position])
   @@index([dueDate])
@@ -161,6 +162,20 @@ model TaskAssignee {
 
   @@id([taskId, userId])
   @@index([userId, taskId])
+}
+
+model TaskChecklistItem {
+  id          String   @id @default(cuid())
+  taskId      String
+  content     String
+  position    Int
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, position])
 }
 
 model Label {
