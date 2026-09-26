@@ -14,12 +14,17 @@
 | Addytywny model i migracja checklisty | Na odizolowanej bazie `taskflow_e2e_stage2` 12 zadań przed i po migracji, `migrate status` OK, `typecheck` OK | `9d92279` | tak |
 | CRUD checklisty, walidacja, odczyt tylko w swojej przestrzeni i blokada archiwum | 6 E2E desktop/mobile, `lint`, `typecheck`, 6 testów walidacji OK | `62dd7ac` | tak |
 | Postęp checklisty na karcie Kanban | E2E trwałości i wskaźnika 1/1, `lint`, `typecheck` OK | `6648003` | tak |
+| Reguły filtrowania Kanban i walidacja parametrów URL | 3 testy jednostkowe, `typecheck` OK | `709cf0b` | tak |
+| Filtry tablicy, URL, puste wyniki i blokada DnD | E2E desktop/mobile 2/2, `lint`, `typecheck` OK | `9503983` | tak |
+| Addytywny model powiadomień i migracja | `migrate deploy` i `migrate status` na odizolowanej bazie `taskflow_e2e_stage2`, `prisma generate`, `typecheck` OK | `6f8939f` | tak |
+| Zdarzenia przypisania i komentarza, odbiorcy, deduplikacja | 2 testy jednostkowe, E2E przypisania, komentarza i ponownego zapisu, `lint`, `typecheck` OK | `bc4f4c8` | tak |
+| Skrzynka powiadomień, licznik i odczyt tylko własnych rekordów | 2 E2E: licznik, oznaczenie przeczytania, izolacja odbiorcy i przestrzeni; `lint`, `typecheck` OK | `ebb246f` | tak |
 
 - `PLAN.md` nie ma lokalnie; zakres opiera się na `TASKFLOW_V1_1_ROADMAP.md`, specyfikacji, raportach jakości i aktualnym kodzie.
-- Następny krok: filtry bezpośrednio na tablicy Kanban, stan w URL i blokada DnD przy aktywnych filtrach. Potem powiadomienia oraz statystyki.
+- Następny krok: statystyki projektów i dashboardu oparte na rzeczywistych danych bieżącej przestrzeni. Potem świeże screenshoty i pełna bramka Etapu 3.
 - Migracja działała na testowej bazie z danymi. Nie wykonano resetu ani operacji destrukcyjnej na bazie użytkownika.
 - Pełna bramka `lint`, `typecheck`, testy, build i E2E oraz nowe screenshoty zostaną wykonane na końcu Etapu 3.
-- **Punkt wznowienia:** `main` po `6648003`; sprawdzić `git status -sb` i `origin/main`, następnie kontynuować filtry Kanban. Nie rozpoczynać Etapu 4.
+- **Punkt wznowienia:** `main` po `ebb246f`; sprawdzić `git status -sb` i `origin/main`, następnie kontynuować statystyki. Nie rozpoczynać Etapu 4.
 
 ## Etap 2 — wykonane jednostki i commity
 
