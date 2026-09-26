@@ -10,20 +10,20 @@ import { Avatar } from "@/components/shared/avatar";
 import { formatDateOnly } from "@/lib/date-only";
 import { updateProjectAction } from "@/app/actions/domain";
 
-type ProjectTask = Prisma.TaskGetPayload<{ include: { assignees: { include: { user: true } }; labels: { include: { label: true } } } }>;
+type ProjectTask = Prisma.TaskGetPayload<{ include: { assignees: { include: { user: true } }; labels: { include: { label: true } }; checklistItems: { select: { isCompleted: true } } } }>;
 type ProjectActivity = Prisma.ActivityGetPayload<{ include: { actor: true; task: true } }>;
 
 export default async function ProjectPage({ params, searchParams }: { params: Promise<{ workspaceId: string; projectId: string }>; searchParams: Promise<{ view?: string; task?: string; status?: string; priority?: string; assignee?: string; q?: string }> }) {
   const { workspaceId, projectId } = await params; const query = await searchParams;
   const { session, membership, project } = await requireProjectAccess(workspaceId, projectId);
   const [tasks, members, labels, activities] = await Promise.all([
-    db.task.findMany({ where: { projectId }, orderBy: [{ status: "asc" }, { position: "asc" }], include: { assignees: { include: { user: true } }, labels: { include: { label: true } } } }),
+    db.task.findMany({ where: { projectId }, orderBy: [{ status: "asc" }, { position: "asc" }], include: { assignees: { include: { user: true } }, labels: { include: { label: true } }, checklistItems: { select: { isCompleted: true } } } }),
     db.workspaceMember.findMany({ where: { workspaceId }, include: { user: true }, orderBy: { joinedAt: "asc" } }),
     db.label.findMany({ where: { workspaceId }, orderBy: { name: "asc" } }),
     db.activity.findMany({ where: { projectId }, take: 50, orderBy: { createdAt: "desc" }, include: { actor: true, task: true } }),
   ]);
   const selectedTask = query.task ? await db.task.findFirst({ where: { id: query.task, projectId }, include: { assignees: true, labels: true, checklistItems: { orderBy: [{ position: "asc" }, { id: "asc" }] }, comments: { include: { author: true }, orderBy: { createdAt: "desc" } }, links: { orderBy: { createdAt: "desc" } }, activities: { include: { actor: true }, orderBy: { createdAt: "desc" }, take: 20 } } }) : null;
-  const boardTasks: BoardTask[] = tasks.map((task) => ({ id: task.id, title: task.title, status: task.status, priority: task.priority, dueDate: task.dueDate?.toISOString() || null, assignees: task.assignees.map((a) => ({ id: a.user.id, name: a.user.name, color: a.user.avatarColor })), labels: task.labels.map((l) => ({ id: l.label.id, name: l.label.name, color: l.label.color })) }));
+  const boardTasks: BoardTask[] = tasks.map((task) => ({ id: task.id, title: task.title, status: task.status, priority: task.priority, dueDate: task.dueDate?.toISOString() || null, checklist: { completed: task.checklistItems.filter((item) => item.isCompleted).length, total: task.checklistItems.length }, assignees: task.assignees.map((a) => ({ id: a.user.id, name: a.user.name, color: a.user.avatarColor })), labels: task.labels.map((l) => ({ id: l.label.id, name: l.label.name, color: l.label.color })) }));
   const view = ["list", "activity", "links"].includes(query.view || "") ? query.view! : "board";
   const filteredTasks = tasks.filter((task) => (!query.status || task.status === query.status) && (!query.priority || task.priority === query.priority) && (!query.assignee || task.assignees.some((item) => item.userId === query.assignee)) && (!query.q || task.title.toLocaleLowerCase("pl").includes(query.q.toLocaleLowerCase("pl"))));
   const tabs = [{ id: "board", label: "Tablica", icon: Columns3 }, { id: "list", label: "Lista", icon: List }, { id: "activity", label: "Aktywność", icon: Activity }, { id: "links", label: "Linki", icon: Link2 }];

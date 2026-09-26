@@ -33,6 +33,9 @@ test("checklista zapisuje dodanie, edycję, ukończenie i usunięcie", async ({ 
   await expect(checklist).toContainText("1 z 1 ukończonych");
   await page.reload();
   await expect(checklist).toContainText("1 z 1 ukończonych");
+  await page.getByRole("button", { name: "Zamknij panel zadania" }).click();
+  await expect(page.locator('a[href*="task=seed_task_01"]').locator("xpath=ancestor::article")).toContainText("1/1");
+  await page.locator('a[href*="task=seed_task_01"]').click();
   page.once("dialog", (dialog) => dialog.accept());
   await checklist.getByRole("button", { name: "Usuń: Sprawdzić tekst i kontrast" }).click();
   await expect(checklist).toContainText("Brak pozycji checklisty.");
