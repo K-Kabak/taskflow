@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { CalendarDays, ChevronsUpDown, FolderKanban, Gauge, LogOut, Menu, Settings, UserRoundCheck, Users, X } from "lucide-react";
+import { Bell, CalendarDays, ChevronsUpDown, FolderKanban, Gauge, LogOut, Menu, Settings, UserRoundCheck, Users, X } from "lucide-react";
 import { Avatar } from "@/components/shared/avatar";
 import { SearchBox } from "@/components/layout/search-box";
 import { BrandLogo } from "@/components/shared/brand-logo";
@@ -13,6 +13,7 @@ type ShellProps = {
   workspace: { id: string; name: string };
   workspaces: { id: string; name: string }[];
   user: { name: string; email: string; avatarColor: string };
+  unreadNotifications: number;
   children: React.ReactNode;
 };
 
@@ -25,7 +26,7 @@ const navigation = [
 
 const focusableSelector = "a[href], button:not([disabled]), select:not([disabled]), input:not([disabled])";
 
-export function AppShell({ workspace, workspaces, user, children }: ShellProps) {
+export function AppShell({ workspace, workspaces, user, unreadNotifications, children }: ShellProps) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -90,7 +91,7 @@ export function AppShell({ workspace, workspaces, user, children }: ShellProps) 
       <header className="flex h-[68px] shrink-0 items-center gap-3 border-b border-[var(--border)] bg-[var(--surface)] px-3 sm:px-6">
         <button ref={menuButton} onClick={() => setOpen(true)} className="rounded-xl p-2 hover:bg-[var(--muted-surface)] md:hidden" aria-label="Otwórz menu" aria-expanded={open}><Menu size={20} /></button>
         <SearchBox workspaceId={workspace.id} />
-        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3"><div className="hidden text-right sm:block"><p className="text-sm font-semibold leading-tight">{user.name}</p><p className="text-xs text-[var(--muted)]">{user.email}</p></div><Avatar name={user.name} color={user.avatarColor} /><button onClick={() => signOut({ callbackUrl: "/login" })} title="Wyloguj się" aria-label="Wyloguj się" className="rounded-xl p-2 text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-red-700"><LogOut size={18} /></button></div>
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3"><Link href={`/w/${workspace.id}/notifications`} aria-label={`Powiadomienia, nieprzeczytane: ${unreadNotifications}`} title="Powiadomienia" className="relative grid min-h-11 min-w-11 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-[var(--foreground)]"><Bell size={19} aria-hidden="true" />{unreadNotifications > 0 && <span className="absolute -top-1 -right-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-[var(--accent)] px-1 text-[10px] font-semibold text-white">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}</Link><div className="hidden text-right sm:block"><p className="text-sm font-semibold leading-tight">{user.name}</p><p className="text-xs text-[var(--muted)]">{user.email}</p></div><Avatar name={user.name} color={user.avatarColor} /><button onClick={() => signOut({ callbackUrl: "/login" })} title="Wyloguj się" aria-label="Wyloguj się" className="rounded-xl p-2 text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-red-700"><LogOut size={18} /></button></div>
       </header>
       <main className="min-h-0 flex-1 overflow-auto p-4 sm:p-6 lg:p-8">{children}</main>
     </div>
