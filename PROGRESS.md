@@ -2,10 +2,24 @@
 
 ## Aktualny etap i zgoda użytkownika
 
-- Autoryzowany etap: **2 — UI/UX i dostępność**.
-- Status: **ukończony; bramka przed Etapem 3**. Punktem wyjścia był ukończony Etap 1 (`8b2105d`).
-- Zgoda: polecenie użytkownika z 2026-09-25 na realizację wyłącznie Etapu 2 oraz wdrożenie zatwierdzonego logo z `public/branding/taskflow-v1.1/`.
-- Etapu 3 nie rozpoczynać bez nowej, wyraźnej zgody.
+- Autoryzowany etap: **3 — cztery funkcjonalności TaskFlow v1.1**.
+- Status: **w trakcie**. Punktem wyjścia jest ukończony Etap 2 (`bf21141`).
+- Zgoda: polecenie użytkownika z 2026-09-26 na realizację wyłącznie Etapu 3.
+- Etapu 4, hostingu i deploymentu nie rozpoczynać bez nowej, wyraźnej zgody.
+
+## Etap 3 — bieżący postęp
+
+| Jednostka | Weryfikacja | Commit | Push |
+| --- | --- | --- | --- |
+| Addytywny model i migracja checklisty | Na odizolowanej bazie `taskflow_e2e_stage2` 12 zadań przed i po migracji, `migrate status` OK, `typecheck` OK | `9d92279` | tak |
+| CRUD checklisty, walidacja, odczyt tylko w swojej przestrzeni i blokada archiwum | 6 E2E desktop/mobile, `lint`, `typecheck`, 6 testów walidacji OK | `62dd7ac` | tak |
+| Postęp checklisty na karcie Kanban | E2E trwałości i wskaźnika 1/1, `lint`, `typecheck` OK | `6648003` | tak |
+
+- `PLAN.md` nie ma lokalnie; zakres opiera się na `TASKFLOW_V1_1_ROADMAP.md`, specyfikacji, raportach jakości i aktualnym kodzie.
+- Następny krok: filtry bezpośrednio na tablicy Kanban, stan w URL i blokada DnD przy aktywnych filtrach. Potem powiadomienia oraz statystyki.
+- Migracja działała na testowej bazie z danymi. Nie wykonano resetu ani operacji destrukcyjnej na bazie użytkownika.
+- Pełna bramka `lint`, `typecheck`, testy, build i E2E oraz nowe screenshoty zostaną wykonane na końcu Etapu 3.
+- **Punkt wznowienia:** `main` po `6648003`; sprawdzić `git status -sb` i `origin/main`, następnie kontynuować filtry Kanban. Nie rozpoczynać Etapu 4.
 
 ## Etap 2 — wykonane jednostki i commity
 
