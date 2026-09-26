@@ -10,6 +10,7 @@ import { parseDateOnly } from "@/lib/date-only";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { actionError, type ActionResult } from "@/lib/action-result";
 import { canDeleteTask, canRemoveMember } from "@/lib/access-policy";
+import { commentRecipients, newlyAssignedRecipients } from "@/lib/notification-recipients";
 
 const workspacePath = (workspaceId: string) => `/w/${workspaceId}`;
 
@@ -104,15 +105,27 @@ export async function updateTaskAction(workspaceId: string, taskId: string, form
     db.label.count({ where: { workspaceId, id: { in: labelIds } } }),
   ]);
   if (members !== assigneeIds.length || labels !== labelIds.length) return actionError("VALIDATION_ERROR", "Wybierz członków i etykiety z bieżącej przestrzeni.");
-  const previousAssignees = await db.taskAssignee.findMany({ where: { taskId }, select: { userId: true } });
-  const assigneesChanged = previousAssignees.map((item) => item.userId).sort().join("|") !== [...assigneeIds].sort().join("|");
-
+  try {
   await db.$transaction(async (tx) => {
+    const previousAssignees = await tx.taskAssignee.findMany({ where: { taskId }, select: { userId: true } });
+    const previousIds = previousAssignees.map((item) => item.userId);
+    const assigneesChanged = previousIds.slice().sort().join("|") !== [...assigneeIds].sort().join("|");
     const targetLast = task.status === parsed.data.status ? null : await tx.task.aggregate({ where: { projectId: task.projectId, status: parsed.data.status }, _max: { position: true } });
     await tx.task.update({ where: { id: taskId }, data: { title: parsed.data.title, description: parsed.data.description, status: parsed.data.status, position: targetLast ? (targetLast._max.position ?? 0) + 1000 : undefined, priority: parsed.data.priority, dueDate: parseDateOnly(parsed.data.dueDate), assignees: { deleteMany: {}, create: assigneeIds.map((userId) => ({ userId })) }, labels: { deleteMany: {}, create: labelIds.map((labelId) => ({ labelId })) } } });
     await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: task.status === parsed.data.status ? "TASK_UPDATED" : "TASK_STATUS_CHANGED", metadataJson: { title: parsed.data.title, from: task.status, to: parsed.data.status } } });
-    if (assigneesChanged) await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "TASK_ASSIGNEES_CHANGED", metadataJson: { assigneeIds } } });
-  });
+    if (assigneesChanged) {
+      const activity = await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "TASK_ASSIGNEES_CHANGED", metadataJson: { assigneeIds } } });
+      const recipients = newlyAssignedRecipients(previousIds, assigneeIds, session.user.id);
+      if (recipients.length) {
+        const members = await tx.workspaceMember.findMany({ where: { workspaceId, userId: { in: recipients } }, select: { userId: true } });
+        await tx.notification.createMany({ data: members.map(({ userId }) => ({ workspaceId, userId, taskId, projectId: task.projectId, type: "TASK_ASSIGNED" as const, message: `Przypisano Ci zadanie: ${parsed.data.title}`, eventKey: `assignment:${activity.id}:${userId}` })), skipDuplicates: true });
+      }
+    }
+  }, { isolationLevel: "Serializable" });
+  } catch (error) {
+    if (isSerializationConflict(error)) return actionError("CONFLICT", "Zadanie zmieniło się w innej sesji. Spróbuj ponownie.");
+    throw error;
+  }
   revalidatePath(workspacePath(workspaceId));
   return { ok: true, data: undefined } as const;
 }
@@ -181,8 +194,11 @@ export async function addCommentAction(workspaceId: string, taskId: string, form
   const parsed = commentSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return actionError("VALIDATION_ERROR", "Popraw komentarz.", parsed.error.flatten().fieldErrors);
   await db.$transaction(async (tx) => {
-    await tx.comment.create({ data: { taskId, authorId: session.user.id, body: parsed.data.body } });
+    const comment = await tx.comment.create({ data: { taskId, authorId: session.user.id, body: parsed.data.body } });
     await tx.activity.create({ data: { workspaceId, projectId: task.projectId, taskId, actorId: session.user.id, action: "COMMENT_ADDED" } });
+    const assignees = await tx.taskAssignee.findMany({ where: { taskId, user: { memberships: { some: { workspaceId } } } }, select: { userId: true } });
+    const recipients = commentRecipients(assignees.map((person) => person.userId), session.user.id);
+    if (recipients.length) await tx.notification.createMany({ data: recipients.map((userId) => ({ workspaceId, userId, taskId, projectId: task.projectId, type: "COMMENT_ADDED" as const, message: `Nowy komentarz w zadaniu: ${task.title}`, eventKey: `comment:${comment.id}:${userId}` })), skipDuplicates: true });
   });
   revalidatePath(workspacePath(workspaceId));
   return { ok: true, data: undefined } as const;
