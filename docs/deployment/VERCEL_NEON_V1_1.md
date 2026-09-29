@@ -1,6 +1,14 @@
 # TaskFlow v1.1 — wdrożenie Vercel + Neon
 
-Stan: instrukcja przygotowana; rzeczywiste wdrożenie i migracje Neon wymagają kont właściciela. Nie oznacza potwierdzonej publikacji.
+Stan na 2026-09-29: **wdrożone i zweryfikowane**. Poniższe kroki 1–2 opisują powtórzenie konfiguracji; nie należy tworzyć kolejnych projektów ani ponownie uruchamiać migracji bez potrzeby.
+
+## Potwierdzona produkcja
+
+- Aplikacja: [https://taskflow-ochre-two.vercel.app/](https://taskflow-ochre-two.vercel.app/), istniejący projekt Vercel `taskflow`, branch Git `main`, plan Hobby. Deployment z `fe9101e` miał status **Ready** i tę domenę jako alias; po kolejnych commitach należy sprawdzić nowy deployment.
+- Baza: istniejący projekt Neon `taskflow-v11-demo`, branch `production`, baza `neondb`. Właściciel wykonał `prisma migrate deploy` i `prisma migrate status`; odczyt z tej bazy potwierdził trzy zakończone migracje. Nie wykonywano produkcyjnego seeda, `migrate reset`, `migrate dev`, `db push` ani zestawu E2E na Neon.
+- Smoke test HTTPS: dwie kontrolowane rejestracje i sesje, izolacja przestrzeni, zaproszenie, projekt, zadanie, Kanban, checklista, filtry, komentarz, przypisanie, powiadomienia, metryki, odświeżenie, usunięcie zadania, archiwizacja projektu i wylogowanie — zaliczone. Zrzuty publicznej aplikacji są w `docs/screenshots/v1.1-stage4/`.
+- Logi Vercel z przedziału 2026-09-29 17:38–17:54 UTC: **0 odpowiedzi 5xx**, **0 wpisów Prisma**; siedem wpisów na poziomie `error` dotyczy wyłącznie ostrzeżenia `pg-connection-string` o przyszłej zmianie semantyki `sslmode=require`. Obecna wersja traktuje je jako `verify-full`; przy aktualizacji `pg` trzeba jawnie utrzymać weryfikację certyfikatu.
+- Dwa konta i dwie przestrzenie smoke testu zostały usunięte jedną transakcją z dokładnymi identyfikatorami po sprawdzeniu projektu, branchu, bazy i odczycie rekordów. Kontrola po operacji wykazała `0` wskazanych kont i `0` wskazanych przestrzeni. Nie czyszczono całej bazy.
 
 ## 1. Baza demonstracyjna
 
@@ -50,6 +58,6 @@ Stan: instrukcja przygotowana; rzeczywiste wdrożenie i migracje Neon wymagają 
 - W Vercel sprawdź status deploymentu i logi buildu oraz błędy Function Logs. W Neon sprawdź połączenia, a `pnpm prisma migrate status` na direct URL powinien wskazać trzy aktualne migracje.
 - Potwierdź HTTPS, sesję i ciasteczka po zalogowaniu, odświeżenie strony, połączenie Prisma i wszystkie ścieżki z listy odbiorczej Etapu 4 w `TASKFLOW_V1_1_ROADMAP.md`.
 - Użyj wyłącznie własnych kont testowych; nie uruchamiaj produkcyjnego seeda ani zestawu Playwright E2E na Neon. Usuń własne dane testowe wyłącznie przez kontrolowane operacje aplikacji.
-- Dopiero po rzeczywistym smoke teście wpisz publiczny URL i aktualne zrzuty do README oraz zamknij Etap 4.
+- Po rzeczywistym smoke teście wpisz publiczny URL i aktualne zrzuty do README. Zakończenie etapu wymaga również zielonego CI dla końcowego commita.
 
 Źródła: [Vercel — import repozytorium](https://vercel.com/docs/git), [Vercel — wersje Node.js](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), [Vercel — Corepack](https://vercel.com/docs/package-managers), [Prisma 7 — PostgreSQL i adresy pooled/direct](https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql), [Prisma — migrate deploy](https://docs.prisma.io/docs/cli/v7/migrate).
