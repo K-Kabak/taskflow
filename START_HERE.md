@@ -1,5 +1,7 @@
 # Pakiet TaskFlow v1.1 — od czego zacząć (rewizja 2)
 
+**Archiwum instrukcji startowych v1.1.** Etapy 1–4 zakończono, a [release `v1.1.0`](https://github.com/K-Kabak/taskflow/releases/tag/v1.1.0) opublikowano z tagiem na `807a75a`. Na `main` jest późniejszy, wdrożony hotfix auth `25a33e7` z zielonym CI; tagu nie przesunięto. W nowej sesji punktem wyjścia jest aktualny `main`, `PROGRESS.md`, `ROADMAP.md` i stan Git. Planowane v1.2.0 nie zostało rozpoczęte; Dark Mode nie należy do v1.1 i nie został zaimplementowany. Poniższych promptów Etapu 1–4 nie używać do nowych prac.
+
 1. Rozpakuj archiwum do **głównego katalogu istniejącego repozytorium** `K-Kabak/taskflow`. Nie twórz nowej aplikacji ani repozytorium.
 2. Otwórz `TASKFLOW_V1_1_ROADMAP.md`, `PROGRESS_TEMPLATE.md` i obrazy w `docs/taskflow-v11/`. Obecny rzeczywisty screenshot jest w istniejącym repo pod `docs/screenshots/taskflow-board.png`.
 3. **Prompt startowy dla agenta VS Code (jeden etap na jedną zgodę):**
@@ -11,5 +13,5 @@
 > Zapoznaj się z `PROGRESS.md`, roadmapą i stanem Git. Zweryfikuj ukończenie poprzedniego etapu i rozpocznij **wyłącznie ETAP [WPISZ NUMER]** zgodnie z zasadami małych, logicznych commitów oraz obowiązkowej pauzy po jego zamknięciu. Nie zaczynaj następnego etapu bez mojej kolejnej zgody.
 
 5. Obrazy oznaczone `concept-*` to **koncepcje UI**, a nie rzeczywiste screeny gotowej aplikacji. Agent musi wykonać własne screeny po wdrożeniu zmian.
-6. Opcjonalne nowe logo i favicon są w `docs/taskflow-v11/branding/`; podmiana wymaga zgody.
+6. Historyczna propozycja logo jest w `docs/taskflow-v11/branding/`; obowiązujące, zaakceptowane logo i favicon wdrożono z `public/branding/taskflow-v1.1/`.
 7. **Nie usuwaj dotychczasowej historii trzech commitów.** Nie używaj `push --force`, `reset --hard` ani `rebase -i`.

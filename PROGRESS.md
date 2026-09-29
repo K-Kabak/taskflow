@@ -1,13 +1,14 @@
 # TaskFlow v1.1 — postęp
 
-## Aktualny etap i zgoda użytkownika
+## Stan końcowy v1.1 i przekazanie do nowej sesji
 
-- Autoryzowany etap: **4 — deployment i portfolio TaskFlow v1.1**.
-- Status: **Etap 4 zakończony 2026-09-29**. Publiczny deployment HTTPS, migracje, smoke test, cleanup, dokumentacja i lokalna bramka jakości zostały zweryfikowane. Po końcowym pushu należy jeszcze odczytać wynik CI i deploymentu dokładnie dla końcowego SHA, a potem zatrzymać pracę.
-- Zgoda: polecenie użytkownika z 2026-09-26 na realizację wyłącznie Etapu 4, na darmowych planach Vercel i Neon; osobna zgoda wymagana przed tagiem/GitHub Release.
-- `PLAN.md` nie istnieje lokalnie. Nie rozpoczynać kolejnego wydania ani płatnych usług.
+- **TaskFlow v1.1 jest zakończone i wdrożone.** Etapy 1–4 oraz produkcyjny smoke test są zamknięte; trzy migracje Neon zastosowano bez produkcyjnego seeda.
+- Publiczny [GitHub Release `v1.1.0`](https://github.com/K-Kabak/taskflow/releases/tag/v1.1.0) opublikowano z tagiem wskazującym na `807a75ab5b372e4de92023ab29ab69d5101febd9`. Tag pozostaje na commicie wydania.
+- Po release opublikowano na `main` hotfix UX auth `25a33e7d494f40ee0c73589a085b70580b5a1e00`: natychmiastowy spinner, teksty „Logowanie…” / „Tworzenie konta…”, blokada pól i ponownego wysłania oraz dostępny komunikat „To może potrwać kilka sekund.”. Błędy przywracają formularz. [CI hotfixu](https://github.com/K-Kabak/taskflow/actions/runs/36617222949) zakończyło się sukcesem; wdrożenie Vercel jest **Ready**, publiczne HTTPS odpowiada `200`, a działanie auth potwierdzono na produkcji.
+- Aktualny `main`, zawierający hotfix i niniejsze domknięcie dokumentacji, jest punktem startowym **przyszłego v1.2.0**. Prac nad v1.2 nie rozpoczęto. **Dark Mode nie należy do v1.1 i nie został zaimplementowany.** Nowy zakres wymaga osobnego polecenia użytkownika. Starsze punkty wznowienia poniżej opisują stan historyczny poszczególnych etapów.
+- `PLAN.md` nie istnieje lokalnie.
 
-## Etap 4 — bieżący postęp
+## Etap 4 — wykonany zakres
 
 | Jednostka | Weryfikacja | Commit | Push |
 | --- | --- | --- | --- |
@@ -18,6 +19,7 @@
 | Instrukcja wdrożenia Neon/Vercel i ignorowanie lokalnych danych Vercel | Kontrola diff; instrukcja nie zawiera sekretów | `625397a` | tak |
 | Portfolio README i trzy rzeczywiste zrzuty produkcyjne | Publiczne HTTPS, screenshoty po smoke teście; CI `fe9101e` success (workflow `36608296347`) | `fe9101e` | tak |
 | Raport wdrożenia, Production Logs i cleanup kont smoke testu | Vercel Ready; brak 5xx, dwa konta i dwie przestrzenie `2/2 → 0/0`; CI success (workflow `36609688199`) | `90e5010` | tak |
+| Końcowe domknięcie Etapu 4 | [CI końcowego commita](https://github.com/K-Kabak/taskflow/actions/runs/36610674550) zakończone sukcesem; produkcja Ready | `807a75a` | tak |
 
 - Wymagania Node.js 24, pnpm 12, Next.js 16 i Prisma 7 zestawiono z aktualnymi dokumentami Vercel/Prisma. Dla Vercel potrzebne `ENABLE_EXPERIMENTAL_COREPACK=1`; `DATABASE_URL` ma wskazywać pooled Neon, a `DIRECT_URL` direct Neon. Procedura: `docs/deployment/VERCEL_NEON_V1_1.md`.
 - Trzy migracje przeszły od zera na lokalnej bazie testowej `taskflow_e2e_stage4`. Następnie właściciel zastosował wszystkie trzy przez `prisma migrate deploy` na istniejącym projekcie Neon `taskflow-v11-demo` (`production`/`neondb`) i potwierdził `migrate status`; odczyt agenta potwierdził trzy zakończone migracje.
@@ -26,12 +28,12 @@
 - Neon CLI potwierdził istniejący projekt, branch `production`, bazę `neondb`, dwa dokładne konta i dwie dokładne przestrzenie utworzone przez produkcyjny smoke test. Transakcyjny cleanup z `.env.smoke-cleanup.local` usunął wyłącznie te identyfikatory; kontrola po operacji: `0` wskazanych kont i `0` wskazanych przestrzeni. Nie uruchamiano seeda ani destrukcyjnych E2E na Neon.
 - Końcowa lokalna bramka na Node.js 26.4.0 (hosting i CI: Node.js 24): `pnpm lint` OK, `pnpm typecheck` OK, `pnpm test` **29/29 w 9 plikach**, `pnpm build` OK. Na odizolowanej lokalnej `taskflow_e2e_stage4`: `prisma migrate status` — trzy aktualne migracje, seed lokalny OK, Playwright **57 zaliczonych, 7 planowo pominiętych** (3,5 min). Znany komunikat lokalnego `next dev` `destination stream closed early` przy przerwanej nawigacji nie spowodował niepowodzenia E2E i nie wystąpił w badanych logach Vercel.
 - Wstępna bramka lokalna przed publikacją na izolowanej bazie: `lint`, `typecheck`, **29/29 testów**, `build` OK; Playwright **57 zaliczonych, 7 planowo pominiętych** (3,6 min). Seed działał wyłącznie na lokalnej bazie testowej. Produkcyjnego seeda i E2E na Neon nie uruchamiano.
-- W logu lokalnego `next dev` podczas E2E pojawił się znany z poprzednich etapów komunikat `destination stream closed early` po przerwanej nawigacji, bez niepowodzenia testu. Po wdrożeniu sprawdzić logi Vercel. W CI pozostawiono Chromium; warianty mobilne są w lokalnej pełnej bramce, a ich dołączenie do każdego pushu wydłużyłoby workflow bez nowej ochrony specyficznej dla wdrożenia.
-- GitHub Actions dla checkpointu `0b1a650`: [workflow 36267857442](https://github.com/K-Kabak/taskflow/actions/runs/36267857442) **success**, `quality` i `e2e` OK; Chromium 30 zaliczonych, 2 planowo pominięte. Końcowy commit tej aktualizacji dokumentu wymaga jeszcze osobnej kontroli CI.
+- W logu lokalnego `next dev` podczas E2E pojawił się znany z poprzednich etapów komunikat `destination stream closed early` po przerwanej nawigacji, bez niepowodzenia testu. Logi Vercel sprawdzono po wdrożeniu. W CI pozostawiono Chromium; warianty mobilne są w lokalnej pełnej bramce, a ich dołączenie do każdego pushu wydłużyłoby workflow bez nowej ochrony specyficznej dla wdrożenia.
+- GitHub Actions dla końcowego commita Etapu 4 `807a75a`: `quality` i `e2e` **success**; Chromium 30 zaliczonych, 2 planowo pominięte. Również CI hotfixu `25a33e7` zakończyło się sukcesem.
 - Dostęp CLI do istniejących kont Vercel/Neon został zatwierdzony przez właściciela. Lokalne metadane `.vercel/` oraz pliki środowiskowe są ignorowane przez Git; wartości sekretów nie są zapisane w dokumentach.
-- **Punkt wznowienia:** po końcowym commicie dokumentacyjnym i pushu sprawdzić synchronizację `main`/`origin/main`, GitHub Actions dla ostatniego SHA, status deploymentu Vercel i publiczne HTTPS. Następnie raport i **STOP**. **Nie tworzyć tagu `v1.1.0` ani GitHub Release bez osobnej zgody.**
+- **Stan po Etapie 4:** release `v1.1.0` został opublikowany, a późniejszy hotfix auth działa na produkcji. Nie ma otwartego punktu wznowienia v1.1.
 
-## Etap 3 — bieżący postęp
+## Etap 3 — archiwum wykonanych prac
 
 | Jednostka | Weryfikacja | Commit | Push |
 | --- | --- | --- | --- |
@@ -69,7 +71,7 @@
 | Kontrast istniejących przycisków i nazwa przestrzeni w sidebarze | `45bcc54` | tak |
 | Pięć rzeczywistych zrzutów, test pięciu szerokości i przegląd UI | `4922d08` | tak |
 
-## Etap 2 — weryfikacja i punkt wznowienia
+## Etap 2 — archiwum weryfikacji i ówczesny punkt wznowienia
 
 - `PLAN.md` nie był dostępny lokalnie; użyto `TASKFLOW_V1_1_ROADMAP.md`, `ROADMAP.md`, `PROGRESS.md`, `docs/quality/REVIEW_V1_1.md`, referencji i aktualnego kodu.
 - `pnpm lint` — OK; `pnpm typecheck` — OK; `pnpm test` — **17/17**; `pnpm build` — OK.

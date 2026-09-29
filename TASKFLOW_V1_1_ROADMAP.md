@@ -1,5 +1,7 @@
 # TaskFlow v1.1 — plan udoskonalenia, UI/UX i wdrożenia
 
+**Stan końcowy (2026-09-29):** wszystkie cztery etapy ukończono i wdrożono. Publiczny [release `v1.1.0`](https://github.com/K-Kabak/taskflow/releases/tag/v1.1.0) ma tag na `807a75a`. Późniejszy hotfix UX auth `25a33e7` jest na `main`, ma zielone [CI](https://github.com/K-Kabak/taskflow/actions/runs/36617222949) i działa na produkcji; tagu wydania nie przesunięto. `main` jest punktem startowym przyszłego v1.2.0, którego prac jeszcze nie rozpoczęto. Dark Mode nie należy do v1.1 i nie został zaimplementowany. Poniższy plan wykonawczy stanowi archiwum realizacji v1.1.
+
 **Dokument wykonawczy dla agenta AI pracującego w VS Code — rewizja 2 (kontrolowane etapy i commity)**
 **Repozytorium:** https://github.com/K-Kabak/taskflow
 **Punkt odniesienia audytu:** `f9cbdda4bcd1ee8d95d4199c6ff9082eb3224a81` (przed rozpoczęciem sprawdź bieżący `HEAD` — repozytorium mogło się zmienić).
@@ -259,16 +261,16 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 
 ### 4.3 CI, README i prezentacja projektu
 
-- [x] GitHub Actions dla `90e5010` zielone: lint, typy, testy, build, migracje i Playwright w Chromium. Oddzielny, kontrolowany smoke test publicznego URL przez HTTPS zaliczony; produkcyjnej bazy nie podłączano do destrukcyjnych E2E.
+- [x] GitHub Actions dla końcowego commita Etapu 4 `807a75a` zielone: lint, typy, testy, build, migracje i Playwright w Chromium. Oddzielny, kontrolowany smoke test publicznego URL przez HTTPS zaliczony; produkcyjnej bazy nie podłączano do destrukcyjnych E2E.
 - [x] README: opis produktu, funkcje, stack, **rzeczywiste** screenshoty v1.1 i produkcji, link demo, uruchomienie, migracje, testy, architektura/uprawnienia, ograniczenia i informacje o środowisku demo (`fe9101e`).
 - [x] Usunięto nieaktualne opisy w README. `TASKFLOW_AGENT_SPEC.md` pozostaje historyczną specyfikacją MVP; README jawnie odsyła do roadmapy rozszerzeń v1.1.
-- [ ] GitHub Release/tag `v1.1.0`: **odłożone na osobną, wyraźną zgodę użytkownika**. Nie tworzyć ich podczas zamykania Etapu 4.
+- [x] GitHub Release/tag `v1.1.0` opublikowano po osobnej zgodzie użytkownika; tag wskazuje na `807a75a` i pozostał bez zmian po hotfixie `25a33e7` na `main`.
 - [x] Raport końcowy obejmuje rzeczywisty URL demo, SHA końcowego commita, wyniki workflow, zakres wdrożenia i otwarte ograniczenia.
 
 ### Kryteria odbioru etapu 4
 
 - [x] Publiczny URL otwiera działającą aplikację przez HTTPS; przeprowadzono smoke test po wdrożeniu.
-- [x] Sekrety i baza demo są odizolowane, migracje wykonano bez utraty danych; GitHub Actions dla `90e5010` zielone. Końcowy commit dokumentacyjny sprawdzić po pushu.
+- [x] Sekrety i baza demo są odizolowane, migracje wykonano bez utraty danych; GitHub Actions dla końcowego commita Etapu 4 `807a75a` zielone.
 - [x] README ma aktualne screeny i link do demo; niniejsza roadmapa dokumentuje zweryfikowany stan.
 - [x] Commity rozdzielają konfigurację wdrożenia, dokumentację i poprawki; każdy zakończony logiczny punkt opublikowano na istniejącym `origin/main`.
 
