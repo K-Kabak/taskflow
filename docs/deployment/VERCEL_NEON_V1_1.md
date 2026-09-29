@@ -57,7 +57,7 @@ Stan na 2026-09-29: **wdrożone i zweryfikowane**. Poniższe kroki 1–2 opisuj�
 
 - W Vercel sprawdź status deploymentu i logi buildu oraz błędy Function Logs. W Neon sprawdź połączenia, a `pnpm prisma migrate status` na direct URL powinien wskazać trzy aktualne migracje.
 - Potwierdź HTTPS, sesję i ciasteczka po zalogowaniu, odświeżenie strony, połączenie Prisma i wszystkie ścieżki z listy odbiorczej Etapu 4 w `TASKFLOW_V1_1_ROADMAP.md`.
-- Użyj wyłącznie własnych kont testowych; nie uruchamiaj produkcyjnego seeda ani zestawu Playwright E2E na Neon. Usuń własne dane testowe wyłącznie przez kontrolowane operacje aplikacji.
+- Użyj wyłącznie własnych kont testowych; nie uruchamiaj produkcyjnego seeda ani zestawu Playwright E2E na Neon. Usuń dane testowe przez kontrolowane operacje aplikacji. Jeśli interfejs nie pozwala usunąć konta lub przestrzeni, przygotuj transakcję ograniczoną do konkretnych identyfikatorów, potwierdź docelowy projekt/branch/bazę i wykonaj odczyt przed oraz po operacji.
 - Po rzeczywistym smoke teście wpisz publiczny URL i aktualne zrzuty do README. Zakończenie etapu wymaga również zielonego CI dla końcowego commita.
 
 Źródła: [Vercel — import repozytorium](https://vercel.com/docs/git), [Vercel — wersje Node.js](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), [Vercel — Corepack](https://vercel.com/docs/package-managers), [Prisma 7 — PostgreSQL i adresy pooled/direct](https://www.prisma.io/docs/orm/v7/core-concepts/supported-databases/postgresql), [Prisma — migrate deploy](https://docs.prisma.io/docs/cli/v7/migrate).

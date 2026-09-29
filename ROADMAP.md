@@ -31,7 +31,7 @@ Etap jest oznaczany jako zakończony dopiero po spełnieniu kryteriów i uruchom
 | 1. Code review, błędy i bezpieczeństwo | [x] | 17/17 testów, 40 E2E zaliczonych i 4 planowo pominięte, `lint`, `typecheck`, `build` OK; szczegóły w `PROGRESS.md` | Zamknięty commitem `8b2105d` |
 | 2. UI/UX | [x] | 17/17 testów, 43 E2E zaliczone i 5 planowo pominiętych, `lint`, `typecheck`, `build` OK; 5 rzeczywistych zrzutów | Zamknięty commitem `bf21141` |
 | 3. Funkcje v1.1 | [x] | 25/25 testów, 57 E2E zaliczonych i 7 planowo pominiętych, `lint`, `typecheck`, `build` OK; dwie addytywne migracje i 5 aktualnych zrzutów | Zamknięty commitem `fd29973` |
-| 4. Deployment i portfolio | [~] | Gotowość kodu i lokalne testy; publiczny URL, Neon i smoke test jeszcze niepotwierdzone | Konfiguracja kont według `docs/deployment/VERCEL_NEON_V1_1.md`, następnie migracje, deployment i weryfikacja |
+| 4. Deployment i portfolio | [x] | [Publiczne HTTPS](https://taskflow-ochre-two.vercel.app/), trzy migracje Neon, smoke test, logi, cleanup danych testowych; lokalnie lint/typecheck/build, 29 testów i 57 E2E OK (7 pominiętych); CI `90e5010` zielone | Zamknięty; tag/GitHub Release wymagają osobnej zgody |
 
 Szczegółowy przegląd Etapu 1: `docs/quality/REVIEW_V1_1.md`. Przegląd UI po Etapie 2: `docs/quality/UI_REVIEW_V1_1.md` i `docs/screenshots/v1.1/`. Definicje metryk i zrzuty Etapu 3: `docs/quality/STAGE3_METRICS.md` i `docs/screenshots/v1.1-stage3/`. Pakiet referencji i zakres etapów opisuje `TASKFLOW_V1_1_ROADMAP.md`.
 

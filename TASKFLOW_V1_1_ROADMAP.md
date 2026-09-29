@@ -247,32 +247,32 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 ### 4.1 Gotowość wdrożeniowa
 
 - [x] Sprawdź zgodność wymagań aktualnego `package.json` (Node/pnpm/Next/Prisma) z hostingiem. Wybrano darmowe Vercel + Neon za zgodą użytkownika; konfiguracja i źródła: `docs/deployment/VERCEL_NEON_V1_1.md`.
-- [ ] Ustaw sekrety wyłącznie w ustawieniach hostingu (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `RATE_LIMIT_SECRET` zgodnie z kodem); użyj prawidłowego adresu HTTPS. Nie kopiuj lokalnych sekretów do repo ani dokumentu.
-- [ ] Stosuj `prisma migrate deploy` w przewidywalnym kroku wdrożenia, bez resetu produkcyjnej bazy. Sprawdź adapter PostgreSQL, połączenia i wymagania ewentualnego poolingu w docelowym środowisku.
+- [x] Ustaw sekrety wyłącznie w ustawieniach hostingu (`DATABASE_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `RATE_LIMIT_SECRET` zgodnie z kodem); użyj prawidłowego adresu HTTPS. Potwierdzono obecność zmiennych Production bez ujawniania wartości.
+- [x] Stosuj `prisma migrate deploy` w przewidywalnym kroku wdrożenia, bez resetu produkcyjnej bazy. Właściciel potwierdził trzy migracje Neon, a agent odczytał ich stan na `production`/`neondb`; aplikacja korzysta z poolingu.
 - [x] Zadbaj o ochronę przed nadużyciami oraz zaufane nagłówki proxy w nowym środowisku. Limity IP z nagłówka Vercel i usuwanie wygasłych wpisów przetestowano lokalnie (`a74a3cc`); rzeczywista kontrola po deploymencie pozostaje w sekcji odbioru.
 
 ### 4.2 Demo i konta testowe
 
-- [ ] Publiczne demo działa na osobnej bazie, bez rzeczywistych danych użytkownika. Jeśli dodajesz konto demonstracyjne, odizoluj je od prawdziwych kont, ogranicz destrukcyjne operacje lub zapewnij bezpieczny reset danych demo. **Nie uruchamiaj developerskiego seeda w produkcji** — obecny projekt blokuje seed przy `NODE_ENV=production`.
-- [ ] Sprawdź pełny przepływ: otwarcie landing page → rejestracja/logowanie/demo → projekt → zadanie → Kanban → wylogowanie. Nie umieszczaj sekretów ani dostępu administracyjnego w README.
-- [ ] Jeśli wdrożenie wymaga logowania, API keys, domeny lub wyboru płatnego planu — zgłoś konkretną blokadę, nie pozoruj sukcesu.
+- [x] Publiczne demo działa na osobnym projekcie Neon. Nie utworzono stałego konta demonstracyjnego, nie wykonano produkcyjnego seeda; dwa konta smoke testu usunięto po kontroli dokładnych identyfikatorów.
+- [x] Sprawdź pełny przepływ: landing page → rejestracja/logowanie → projekt → zadanie → Kanban → wylogowanie. Dodatkowo zweryfikowano funkcje v1.1 i izolację przestrzeni przez HTTPS.
+- [x] Autoryzacja właściciela do istniejących projektów Vercel i Neon została zakończona. Hosting pozostał na bezpłatnych planach; nie utworzono nowych projektów ani domeny.
 
 ### 4.3 CI, README i prezentacja projektu
 
-- [ ] Utrzymaj zielone GitHub Actions: lint, typy, testy, build, migracje i Playwright. Dodaj smoke test publicznego URL po wdrożeniu (jeśli hosting pozwala).
-- [ ] README: zwięzły opis produktu, funkcje, stack, **rzeczywiste** screenshoty v1.1, link demo, instrukcja uruchomienia, migracje, testy, architektura/uprawnienia, ograniczenia i informacje o środowisku demo.
-- [ ] Usuń nieaktualne opisy (np. jeśli v1.1 dodała powiadomienia, nie twierdź już, że ich nie ma). Zaktualizuj `TASKFLOW_AGENT_SPEC.md` wyłącznie tam, gdzie trzeba rozróżnić MVP od v1.1; zachowaj historyczną specyfikację jako referencję bazową lub dodaj jasną sekcję zmian.
-- [ ] Przygotuj GitHub Release/tag `v1.1.0` **dopiero po** potwierdzeniu wdrożenia, testów i akceptacji przez użytkownika; nie nadpisuj starych tagów.
-- [ ] W podsumowaniu podaj rzeczywisty URL demo, SHA końcowego commita, wyniki workflow, zakres wdrożenia i ewentualne otwarte ograniczenia.
+- [x] GitHub Actions dla `90e5010` zielone: lint, typy, testy, build, migracje i Playwright w Chromium. Oddzielny, kontrolowany smoke test publicznego URL przez HTTPS zaliczony; produkcyjnej bazy nie podłączano do destrukcyjnych E2E.
+- [x] README: opis produktu, funkcje, stack, **rzeczywiste** screenshoty v1.1 i produkcji, link demo, uruchomienie, migracje, testy, architektura/uprawnienia, ograniczenia i informacje o środowisku demo (`fe9101e`).
+- [x] Usunięto nieaktualne opisy w README. `TASKFLOW_AGENT_SPEC.md` pozostaje historyczną specyfikacją MVP; README jawnie odsyła do roadmapy rozszerzeń v1.1.
+- [ ] GitHub Release/tag `v1.1.0`: **odłożone na osobną, wyraźną zgodę użytkownika**. Nie tworzyć ich podczas zamykania Etapu 4.
+- [x] Raport końcowy obejmuje rzeczywisty URL demo, SHA końcowego commita, wyniki workflow, zakres wdrożenia i otwarte ograniczenia.
 
 ### Kryteria odbioru etapu 4
 
-- [ ] Publiczny URL otwiera działającą aplikację przez HTTPS; przeprowadzono smoke test po wdrożeniu.
-- [ ] Sekrety i baza demo są odizolowane; migracje wykonano bez utraty danych; GitHub Actions zielone.
-- [ ] README ma aktualne screeny i link do demo; `ROADMAP_V1_1.md` dokumentuje faktyczny stan, a nie deklarację bez weryfikacji.
-- [ ] Commity rozdzielają konfigurację wdrożenia, dokumentację i ewentualne poprawki; ostatni `git push` zakończony pomyślnie.
+- [x] Publiczny URL otwiera działającą aplikację przez HTTPS; przeprowadzono smoke test po wdrożeniu.
+- [x] Sekrety i baza demo są odizolowane, migracje wykonano bez utraty danych; GitHub Actions dla `90e5010` zielone. Końcowy commit dokumentacyjny sprawdzić po pushu.
+- [x] README ma aktualne screeny i link do demo; niniejsza roadmapa dokumentuje zweryfikowany stan.
+- [x] Commity rozdzielają konfigurację wdrożenia, dokumentację i poprawki; każdy zakończony logiczny punkt opublikowano na istniejącym `origin/main`.
 
-- [ ] **Bramka etapu 4:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`, przekazano użytkownikowi wyniki i **zatrzymano agenta**; nie zaczynaj etapu kolejnego wydania bez odrębnej zgody.
+- [x] **Bramka etapu 4:** opublikowano zweryfikowane commity i raport w `PROGRESS.md`; po końcowym raporcie **STOP**. Nie zaczynaj etapu kolejnego wydania bez odrębnej zgody.
 
 ---
 
@@ -292,8 +292,8 @@ Zapisz do `docs/screenshots/v1.1/` (z anonimowymi/testowymi danymi): `kanban-des
 - [x] Etap 1: naprawione potwierdzone problemy, rzetelny raport i testy regresyjne.
 - [x] Etap 2: spójne, dostępne UI na desktopie i telefonie; nowe rzeczywiste screenshoty.
 - [x] Etap 3: checklisty, filtry Kanbanu, powiadomienia w aplikacji, statystyki — z migracjami i testami.
-- [ ] Etap 4: działające bezpieczne demo HTTPS, aktualne README i zielone CI.
-- [ ] Brak sekretów w repo, brak atrap funkcjonalności, brak utraty danych z dotychczasowego MVP.
-- [ ] W repo widać osobne logiczne commity dla faktycznych zmian v1.1 oraz aktualny stan `ROADMAP_V1_1.md`/`PROGRESS.md`.
+- [x] Etap 4: działające bezpieczne demo HTTPS, aktualne README i zielone CI.
+- [x] Brak sekretów w repo, brak atrap funkcjonalności, brak utraty danych z dotychczasowego MVP.
+- [x] W repo widać osobne logiczne commity dla faktycznych zmian v1.1 oraz aktualny stan `TASKFLOW_V1_1_ROADMAP.md`/`PROGRESS.md`.
 
 **Nie kończ ETAPU po napisaniu kodu:** wykonaj jego weryfikację, dokumentację i synchronizację z GitHubem. **Następnie obowiązkowo zatrzymaj się po etapie i czekaj na osobną zgodę użytkownika.** W środku etapu wolno przerwać także przy rzeczywistej blokadzie, sygnale o niskim usage lub po bezpiecznym checkpointcie, dokumentując dokładny punkt wznowienia.
