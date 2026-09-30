@@ -1,23 +1,113 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #f7f7f5;
   --surface: #ffffff;
+  --elevated-surface: #ffffff;
   --muted-surface: #fafaf8;
   --column: #fbfbfa;
   --foreground: #252525;
   --muted: #777772;
+  --subtle: #767670;
   --border: #ececea;
+  --border-strong: #767670;
   --accent: #f97316;
   --accent-hover: #ea580c;
+  --on-accent: #252525;
   --accent-ink: #9a3412;
   --accent-soft: #fff2e8;
   --danger: #dc2626;
+  --danger-soft: #fff1f0;
   --success: #15803d;
+  --success-soft: #edf9ee;
+  --warning: #92400e;
+  --warning-soft: #fff7d6;
+  --info: #1e40af;
+  --info-soft: #eff6ff;
+  --input: #ffffff;
+  --disabled: #f0f0ec;
+  --hover: #f1f1ed;
+  --selected: #fff2e8;
+  --focus-ring: #9a3412;
+  --overlay: rgb(0 0 0 / 35%);
+  --skeleton: #e9e9e4;
   --radius-control: 12px;
   --radius-card: 20px;
   --space-section: 24px;
   --shadow: 0 12px 32px rgb(37 37 37 / 6%);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #17191c;
+  --surface: #202428;
+  --elevated-surface: #292e33;
+  --muted-surface: #252a2f;
+  --column: #1c2024;
+  --foreground: #f4f4f1;
+  --muted: #b7bab8;
+  --subtle: #9da3a1;
+  --border: #42494f;
+  --border-strong: #9da3a1;
+  --accent: #fb923c;
+  --accent-hover: #fdba74;
+  --on-accent: #1b120b;
+  --accent-ink: #ffb36f;
+  --accent-soft: #302219;
+  --danger: #ff8f8f;
+  --danger-soft: #381f23;
+  --success: #86efac;
+  --success-soft: #1b3124;
+  --warning: #fcd34d;
+  --warning-soft: #3a2d16;
+  --info: #93c5fd;
+  --info-soft: #1b2b40;
+  --input: #24282d;
+  --disabled: #25282c;
+  --hover: #292e33;
+  --selected: #302219;
+  --focus-ring: #ffb36f;
+  --overlay: rgb(0 0 0 / 65%);
+  --skeleton: #343a40;
+  --shadow: 0 12px 32px rgb(0 0 0 / 20%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+    --background: #17191c;
+    --surface: #202428;
+    --elevated-surface: #292e33;
+    --muted-surface: #252a2f;
+    --column: #1c2024;
+    --foreground: #f4f4f1;
+    --muted: #b7bab8;
+    --subtle: #9da3a1;
+    --border: #42494f;
+    --border-strong: #9da3a1;
+    --accent: #fb923c;
+    --accent-hover: #fdba74;
+    --on-accent: #1b120b;
+    --accent-ink: #ffb36f;
+    --accent-soft: #302219;
+    --danger: #ff8f8f;
+    --danger-soft: #381f23;
+    --success: #86efac;
+    --success-soft: #1b3124;
+    --warning: #fcd34d;
+    --warning-soft: #3a2d16;
+    --info: #93c5fd;
+    --info-soft: #1b2b40;
+    --input: #24282d;
+    --disabled: #25282c;
+    --hover: #292e33;
+    --selected: #302219;
+    --focus-ring: #ffb36f;
+    --overlay: rgb(0 0 0 / 65%);
+    --skeleton: #343a40;
+    --shadow: 0 12px 32px rgb(0 0 0 / 20%);
+  }
 }
 
 * {
@@ -48,7 +138,7 @@ a {
 }
 
 :focus-visible {
-  outline: 3px solid var(--accent-ink);
+  outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
@@ -68,29 +158,29 @@ select:disabled {
 
 .tf-input {
   min-width: 0;
-  border: 1px solid #d4d4cf;
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);
-  background: var(--surface);
+  background: var(--input);
   padding: 10px 12px;
   color: var(--foreground);
 }
 
 .tf-input:disabled {
-  background: var(--muted-surface);
+  background: var(--disabled);
   color: var(--muted);
 }
 
 .tf-button-primary {
   border-radius: var(--radius-control);
   background: var(--accent);
-  color: var(--foreground);
+  color: var(--on-accent);
   font-weight: 650;
   transition: background-color 150ms ease, box-shadow 150ms ease;
 }
 
 .tf-button-primary:hover:not(:disabled) {
   background: var(--accent-hover);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .tf-button-primary:disabled {
@@ -99,11 +189,11 @@ select:disabled {
 
 /* Existing primary controls also use Tailwind's orange background utility. */
 :is(a, button).bg-orange-500.text-white {
-  color: #171717;
+  color: var(--on-accent);
 }
 
 .tf-button-secondary {
-  border: 1px solid #deded9;
+  border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);
   background: var(--surface);
   color: var(--foreground);
@@ -112,7 +202,7 @@ select:disabled {
 }
 
 .tf-button-secondary:hover:not(:disabled) {
-  background: var(--muted-surface);
+  background: var(--hover);
 }
 
 .tf-text-link {
