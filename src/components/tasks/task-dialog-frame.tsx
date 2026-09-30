@@ -49,10 +49,10 @@ export function TaskDialogFrame({ taskId, returnHref, children }: { taskId: stri
     }
   }
 
-  return <div className="fixed inset-0 z-40 flex justify-end bg-black/35">
+  return <div className="fixed inset-0 z-40 flex justify-end bg-[var(--overlay)]">
     <button type="button" aria-label="Zamknij szczegóły zadania" tabIndex={-1} onClick={() => router.push(returnHref, { scroll: false })} className="absolute inset-0" />
-    <aside ref={panel} role="dialog" aria-modal="true" aria-labelledby="task-panel-heading" onKeyDown={handleKeyDown} className="relative h-full w-full overflow-y-auto bg-white p-5 shadow-2xl sm:max-w-xl sm:p-7">
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-white pb-3"><p id="task-panel-heading" className="text-sm font-semibold text-[var(--accent-ink)]">Szczegóły zadania</p><button ref={closeButton} type="button" onClick={() => router.push(returnHref, { scroll: false })} aria-label="Zamknij panel zadania" className="min-h-10 min-w-10 rounded-lg p-2 hover:bg-[var(--muted-surface)]"><X size={19} /></button></div>
+    <aside ref={panel} role="dialog" aria-modal="true" aria-labelledby="task-panel-heading" onKeyDown={handleKeyDown} className="relative h-full w-full overflow-y-auto bg-[var(--surface)] p-5 shadow-2xl sm:max-w-xl sm:p-7">
+      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--border)] bg-[var(--surface)] pb-3"><p id="task-panel-heading" className="text-sm font-semibold text-[var(--accent-ink)]">Szczegóły zadania</p><button ref={closeButton} type="button" onClick={() => router.push(returnHref, { scroll: false })} aria-label="Zamknij panel zadania" className="min-h-10 min-w-10 rounded-lg p-2 hover:bg-[var(--muted-surface)]"><X size={19} /></button></div>
       {children}
     </aside>
   </div>;

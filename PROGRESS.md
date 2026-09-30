@@ -9,6 +9,7 @@
 - Jednostka 3: wspólna kontrolka wyboru motywu na landing, auth i w nagłówku aplikacji; zapis lokalny, synchronizacja między kartami, obsługa Escape i kliknięcia poza panelem. `pnpm lint` i `pnpm typecheck` OK. Pokrycie kolorów widoków jest kolejną jednostką.
 - Jednostka 4: landing, login/register, zaproszenie, 404 i globalny błąd używają semantycznych kolorów; poziome logo otrzymało warstwę z jasnym napisem na ciemnym tle bez zmiany znaku. `pnpm lint` i `pnpm typecheck` OK.
 - Jednostka 5: AppShell, header, sidebar, menu mobilne, wyszukiwanie i wspólne komunikaty formularzy używają kolorów motywu; rozmiar wyszukiwarki może się zmniejszać na mobile. `pnpm lint` i `pnpm typecheck` OK.
+- Jednostka 6: dashboard, metryki, projekty, lista zadań, Kanban, panel zadania, checklista i filtry przeniesione na semantyczne kolory. Pozostałe `text-white` w tej grupie dotyczą inicjałów na kolorowych avatarach; kontrast będzie oceniony podczas visual QA. `pnpm lint` i `pnpm typecheck` OK.
 
 ## Archiwum v1.1
 
