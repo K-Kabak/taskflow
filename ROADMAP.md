@@ -9,7 +9,7 @@
 | Wszystkie widoki aplikacji | [x] | Dashboard, zadania, Kanban, powiadomienia, pozostałe trasy i stany błędów w obu motywach |
 | Testy i visual QA | [x] | Lint, typecheck, 31 testów, build i pełny Playwright (76 zaliczonych, 10 pominiętych) na izolowanej bazie; 18 rzeczywistych zrzutów Light/Dark |
 | Dokumentacja i wersja | [x] | README, opis systemu motywów, portfolio i `package.json` 1.2.0 |
-| CI i produkcja | [ ] | Zielone joby dla końcowego SHA, Vercel Ready dla tego SHA, lekki smoke test i logi |
+| CI i produkcja | [x] | CI `a147f2b` zielone, Vercel Ready, publiczny i uwierzytelniony smoke test OK; po commicie tego raportu sprawdzić nowe SHA i deployment |
 | Tag i GitHub Release `v1.2.0` | [ ] | Oddzielna zgoda właściciela po ukończeniu powyższych kontroli |
 
 Istniejący tag i GitHub Release `v1.1.0` pozostają bez zmian.
