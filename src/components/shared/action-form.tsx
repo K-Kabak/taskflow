@@ -42,8 +42,8 @@ export function ActionForm({ action, children, className, resetOnSuccess = false
 
   return <form ref={formRef} onSubmit={onSubmit} className={className} aria-busy={pending} noValidate>
     <fieldset disabled={pending} className="contents">{children}</fieldset>
-    {pending && <p role="status" className="mt-3 text-sm text-[#777772]">Zapisywanie…</p>}
-    {result?.ok === false && <div role="alert" className="mt-3 rounded-lg bg-red-50 p-3 text-sm text-red-800"><p>{result.message}</p>{result.fieldErrors && <ul className="mt-1 list-inside list-disc">{Object.entries(result.fieldErrors).flatMap(([field, messages]) => messages.map((message) => <li key={`${field}:${message}`}>{message}</li>))}</ul>}</div>}
-    {result?.ok === true && <p role="status" className="mt-3 text-sm text-green-700">{successMessage}</p>}
+    {pending && <p role="status" className="mt-3 text-sm text-[var(--muted)]">Zapisywanie…</p>}
+    {result?.ok === false && <div role="alert" className="mt-3 rounded-lg bg-[var(--danger-soft)] p-3 text-sm text-[var(--danger)]"><p>{result.message}</p>{result.fieldErrors && <ul className="mt-1 list-inside list-disc">{Object.entries(result.fieldErrors).flatMap(([field, messages]) => messages.map((message) => <li key={`${field}:${message}`}>{message}</li>))}</ul>}</div>}
+    {result?.ok === true && <p role="status" className="mt-3 text-sm text-[var(--success)]">{successMessage}</p>}
   </form>;
 }

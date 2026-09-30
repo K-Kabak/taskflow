@@ -65,7 +65,7 @@ export function AppShell({ workspace, workspaces, user, unreadNotifications, chi
   }
 
   function sidebar(mobile = false) {
-    const itemClass = (active: boolean) => `flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${active ? "bg-[var(--accent-soft)] font-semibold text-[var(--accent-ink)]" : "text-[#595953] hover:bg-white hover:text-[var(--foreground)]"}`;
+    const itemClass = (active: boolean) => `flex min-h-11 items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors ${active ? "bg-[var(--accent-soft)] font-semibold text-[var(--accent-ink)]" : "text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]"}`;
     const navLink = (href: string, label: string, Icon: typeof Gauge) => {
       const active = pathname === href || pathname.startsWith(`${href}/`);
       return <Link key={href} href={href} onClick={() => setOpen(false)} aria-current={active ? "page" : undefined} className={itemClass(active)}><Icon size={18} aria-hidden="true" />{label}</Link>;
@@ -85,15 +85,15 @@ export function AppShell({ workspace, workspaces, user, unreadNotifications, chi
   return <div className="flex h-dvh overflow-hidden bg-[var(--background)]">
     <div className="hidden md:block">{sidebar()}</div>
     {open && <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true" aria-label="Menu nawigacyjne" onKeyDown={handleDrawerKeyDown}>
-      <button aria-label="Zamknij menu" className="absolute inset-0 bg-black/35" onClick={() => setOpen(false)} tabIndex={-1} />
-      <div ref={drawer} className="relative h-full w-fit shadow-2xl">{sidebar(true)}<button aria-label="Zamknij menu" onClick={() => setOpen(false)} className="absolute top-6 right-4 rounded-lg p-2 hover:bg-white"><X size={18} /></button></div>
+      <button aria-label="Zamknij menu" className="absolute inset-0 bg-[var(--overlay)]" onClick={() => setOpen(false)} tabIndex={-1} />
+      <div ref={drawer} className="relative h-full w-fit shadow-2xl">{sidebar(true)}<button aria-label="Zamknij menu" onClick={() => setOpen(false)} className="absolute top-6 right-4 rounded-lg p-2 hover:bg-[var(--hover)]"><X size={18} /></button></div>
     </div>}
     <div className="flex min-w-0 flex-1 flex-col">
       <header className="flex h-[68px] shrink-0 items-center gap-3 border-b border-[var(--border)] bg-[var(--surface)] px-3 sm:px-6">
         <button ref={menuButton} onClick={() => setOpen(true)} className="rounded-xl p-2 hover:bg-[var(--muted-surface)] md:hidden" aria-label="Otwórz menu" aria-expanded={open}><Menu size={20} /></button>
         <SearchBox workspaceId={workspace.id} />
         <ThemeSwitcher />
-        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3"><Link href={`/w/${workspace.id}/notifications`} aria-label={`Powiadomienia, nieprzeczytane: ${unreadNotifications}`} title="Powiadomienia" className="relative grid min-h-11 min-w-11 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-[var(--foreground)]"><Bell size={19} aria-hidden="true" />{unreadNotifications > 0 && <span className="absolute -top-1 -right-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-[var(--accent)] px-1 text-[10px] font-semibold text-white">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}</Link><div className="hidden text-right sm:block"><p className="text-sm font-semibold leading-tight">{user.name}</p><p className="text-xs text-[var(--muted)]">{user.email}</p></div><Avatar name={user.name} color={user.avatarColor} /><button onClick={() => signOut({ callbackUrl: "/login" })} title="Wyloguj się" aria-label="Wyloguj się" className="rounded-xl p-2 text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-red-700"><LogOut size={18} /></button></div>
+        <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3"><Link href={`/w/${workspace.id}/notifications`} aria-label={`Powiadomienia, nieprzeczytane: ${unreadNotifications}`} title="Powiadomienia" className="relative grid min-h-11 min-w-11 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-[var(--foreground)]"><Bell size={19} aria-hidden="true" />{unreadNotifications > 0 && <span className="absolute -top-1 -right-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-[var(--accent)] px-1 text-[10px] font-semibold text-[var(--on-accent)]">{unreadNotifications > 99 ? "99+" : unreadNotifications}</span>}</Link><div className="hidden text-right sm:block"><p className="text-sm font-semibold leading-tight">{user.name}</p><p className="text-xs text-[var(--muted)]">{user.email}</p></div><Avatar name={user.name} color={user.avatarColor} /><button onClick={() => signOut({ callbackUrl: "/login" })} title="Wyloguj się" aria-label="Wyloguj się" className="rounded-xl p-2 text-[var(--muted)] hover:bg-[var(--muted-surface)] hover:text-[var(--danger)]"><LogOut size={18} /></button></div>
       </header>
       <main className="min-h-0 flex-1 overflow-auto p-4 sm:p-6 lg:p-8">{children}</main>
     </div>
