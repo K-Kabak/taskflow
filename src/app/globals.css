@@ -190,11 +190,6 @@ select:disabled {
   opacity: 0.6;
 }
 
-/* Existing primary controls also use Tailwind's orange background utility. */
-:is(a, button).bg-orange-500.text-white {
-  color: var(--on-accent);
-}
-
 .tf-button-secondary {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-control);

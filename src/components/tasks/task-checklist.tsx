@@ -8,7 +8,7 @@ export function TaskChecklist({ workspaceId, taskId, items, readOnly }: { worksp
   const completed = items.filter((item) => item.isCompleted).length;
   return <section aria-labelledby="checklist-heading" className="mt-8 border-t border-[var(--border)] pt-6">
     <div className="flex items-center justify-between gap-3"><h2 id="checklist-heading" className="font-semibold">Checklista</h2>{items.length > 0 && <span className="text-sm font-medium text-[var(--muted)]">{completed} z {items.length} ukończonych</span>}</div>
-    {items.length > 0 && <progress aria-label="Postęp checklisty" max={items.length} value={completed} className="mt-3 h-2 w-full accent-orange-500" />}
+    {items.length > 0 && <progress aria-label="Postęp checklisty" max={items.length} value={completed} className="mt-3 h-2 w-full accent-[var(--accent)]" />}
     {!items.length && <p className="mt-3 text-sm text-[var(--muted)]">Brak pozycji checklisty.</p>}
     <ul className="mt-3 space-y-2">{items.map((item) => <li key={item.id} className="rounded-xl border border-[var(--border)] p-3">
       <div className="flex items-start gap-2">
