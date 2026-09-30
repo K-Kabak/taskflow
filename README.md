@@ -1,12 +1,12 @@
-# TaskFlow v1.1
+# TaskFlow v1.2
 
 TaskFlow to polskojęzyczna aplikacja do prowadzenia projektów w małych zespołach. Łączy tablicę Kanban, szczegóły zadań, współpracę i statystyki w przestrzeniach roboczych z rolami.
 
 **Publiczna aplikacja:** [taskflow-ochre-two.vercel.app](https://taskflow-ochre-two.vercel.app/) — rejestracja jest otwarta. Produkcyjna baza zaczyna się bez danych demonstracyjnych; znane konto z lokalnego seeda nie działa w publicznej aplikacji.
 
-![Rzeczywisty widok tablicy Kanban TaskFlow v1.1 z filtrem i statystykami](./docs/screenshots/v1.1-stage3/kanban-filters.png)
+![Rzeczywisty widok tablicy Kanban TaskFlow v1.2 w ciemnym motywie](./docs/screenshots/v1.2/dark-kanban.png)
 
-Zrzut tablicy pochodzi z działającej aplikacji na izolowanych danych testowych. Po publikacji na Vercel sfotografowano [stronę główną](./docs/screenshots/v1.1-stage4/landing-production.png), [rejestrację](./docs/screenshots/v1.1-stage4/register-production.png) i [powiadomienia podczas kontrolowanego testu](./docs/screenshots/v1.1-stage4/notifications-production.png). Pozostałe rzeczywiste widoki: [checklista](./docs/screenshots/v1.1-stage3/task-checklist.png), [statystyki projektu](./docs/screenshots/v1.1-stage3/project-metrics.png), [dashboard](./docs/screenshots/v1.1-stage3/dashboard-metrics.png) i [układ mobilny](./docs/screenshots/v1.1/kanban-mobile.png).
+Zrzut tablicy pochodzi z działającej aplikacji na izolowanych danych testowych. Zestaw v1.2 pokazuje [jasny Kanban](./docs/screenshots/v1.2/light-kanban.png), [ciemny dashboard](./docs/screenshots/v1.2/dark-dashboard.png), [panel zadania](./docs/screenshots/v1.2/dark-task-panel.png), [powiadomienia](./docs/screenshots/v1.2/dark-notifications.png) i [widok mobilny](./docs/screenshots/v1.2/dark-mobile-kanban.png). Historyczne zrzuty produkcyjne v1.1 pozostają w `docs/screenshots/v1.1-stage4/`.
 
 ## Funkcje
 
@@ -18,6 +18,7 @@ Zrzut tablicy pochodzi z działającej aplikacji na izolowanych danych testowych
 - Powiadomienia w aplikacji o przypisaniach i komentarzach, licznik nieprzeczytanych oraz oznaczanie jako przeczytane.
 - Dashboard i statystyki projektu liczone z rzeczywistych danych bieżącej przestrzeni, „Moje zadania”, kalendarz i wyszukiwanie.
 - Responsywny interfejs, dostępna nawigacja, walidacja oraz autoryzacja operacji po stronie serwera.
+- Motywy Jasny, Ciemny i Systemowy dostępne także przed logowaniem; Systemowy jest domyślny, a ręczny wybór ma pierwszeństwo i jest zapisywany lokalnie w przeglądarce.
 
 ## Technologia i architektura
 
@@ -26,6 +27,8 @@ Next.js 16 App Router, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Prisma 
 Server Components pobierają dane, a Server Actions zapisują zmiany. Każda operacja sprawdza sesję i uprawnienia do przestrzeni po stronie serwera; identyfikator przestrzeni w URL nie jest źródłem uprawnień. Powiązane projekty, zadania, osoby i etykiety są weryfikowane w tej samej przestrzeni. Role ograniczają zarządzanie projektami i zespołem. Rate limiting działa atomowo w PostgreSQL, używa hashowanych kluczy i na Vercel także zaufanego adresu IP.
 
 W produkcji Vercel uruchamia aplikację przez HTTPS, a Neon udostępnia osobną bazę PostgreSQL. Aplikacja używa połączenia pooled przez `DATABASE_URL`; Prisma CLI wykonuje migracje przez bezpośredni `DIRECT_URL`. Migracje są wersjonowane i uruchamiane świadomie przed wdrożeniem kodu wymagającego nowego schematu, nie przy każdym żądaniu.
+
+Motyw jest ustawiany przed pierwszym wyświetleniem strony przez krótki skrypt w `<head>`, a kolory pochodzą z semantycznych zmiennych CSS. Preferencja `light | dark | system` jest przechowywana w `localStorage`; nie wymaga konta, zmian bazy ani migracji. [Opis systemu motywów](./docs/quality/THEMES_V1_2.md).
 
 ## Uruchomienie lokalne
 
@@ -86,6 +89,6 @@ Zaproszenia są jednorazowe, ważne siedem dni; baza przechowuje ich hash SHA-25
 
 ## Ograniczenia
 
-Powiadomienia odświeżają się przy nawigacji lub odświeżeniu strony; aplikacja nie ma realtime, e-maili ani push. Nie ma odzyskiwania hasła, uploadu plików, samodzielnego usuwania konta lub przestrzeni, płatności, czatu ani trybu offline. Kolejna przestrzeń staje się dostępna przez zaproszenie. Publiczna wersja działa w limitach bezpłatnych planów usług.
+Powiadomienia odświeżają się przy nawigacji lub odświeżeniu strony; aplikacja nie ma realtime, e-maili ani push. Nie ma odzyskiwania hasła, uploadu plików, samodzielnego usuwania konta lub przestrzeni, płatności, czatu ani trybu offline. Preferencja motywu dotyczy jednej przeglądarki i nie jest synchronizowana między urządzeniami. Kolejna przestrzeń staje się dostępna przez zaproszenie. Publiczna wersja działa w limitach bezpłatnych planów usług.
 
-Historia prac i wyniki jakości: [ROADMAP.md](./ROADMAP.md), [PROGRESS.md](./PROGRESS.md), [przegląd kodu](./docs/quality/REVIEW_V1_1.md), [przegląd UI](./docs/quality/UI_REVIEW_V1_1.md) oraz [definicje metryk](./docs/quality/STAGE3_METRICS.md). [Specyfikacja bazowa](./TASKFLOW_AGENT_SPEC.md) opisuje MVP; rozszerzenia v1.1 są w [roadmapie v1.1](./TASKFLOW_V1_1_ROADMAP.md).
+Historia prac i wyniki jakości: [ROADMAP.md](./ROADMAP.md), [PROGRESS.md](./PROGRESS.md), [system motywów v1.2](./docs/quality/THEMES_V1_2.md), [przegląd kodu v1.1](./docs/quality/REVIEW_V1_1.md), [przegląd UI v1.1](./docs/quality/UI_REVIEW_V1_1.md) oraz [definicje metryk](./docs/quality/STAGE3_METRICS.md). [Specyfikacja bazowa](./TASKFLOW_AGENT_SPEC.md) opisuje MVP; rozszerzenia v1.1 są w [roadmapie v1.1](./TASKFLOW_V1_1_ROADMAP.md).

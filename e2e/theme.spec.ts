@@ -100,3 +100,33 @@ test("przełącznik i panel mieszczą się na telefonie", async ({ page }, testI
   const width = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(width).toBeLessThanOrEqual(1);
 });
+
+test("ciemny formularz zachowuje czytelny błąd, focus i hover", async ({ page }, testInfo) => {
+  await page.addInitScript(() => localStorage.setItem("taskflow-theme", "dark"));
+  await page.goto("/login");
+  const email = page.getByLabel("E-mail");
+  await email.focus();
+  expect(await email.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe("none");
+  const button = page.getByRole("button", { name: "Zaloguj się" });
+  if (testInfo.project.name === "chromium") {
+    const regular = await button.evaluate((element) => getComputedStyle(element).backgroundColor);
+    await button.hover();
+    await expect.poll(() => button.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(regular);
+  }
+  await email.fill("anna@taskflow.demo");
+  await page.getByLabel("Hasło", { exact: true }).fill("NiepoprawneHaslo123!");
+  await button.click();
+  const alert = page.locator("form").getByRole("alert");
+  await expect(alert).toContainText("Nieprawidłowy e-mail lub hasło.");
+  const contrast = await alert.evaluate((element) => {
+    const relative = (css: string) => {
+      const rgb = css.match(/[\d.]+/g)!.slice(0, 3).map((part) => Number(part) / 255).map((value) => value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4);
+      return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722;
+    };
+    const style = getComputedStyle(element);
+    const foreground = relative(style.color);
+    const background = relative(style.backgroundColor);
+    return (Math.max(foreground, background) + 0.05) / (Math.min(foreground, background) + 0.05);
+  });
+  expect(contrast).toBeGreaterThanOrEqual(4.5);
+});
