@@ -216,7 +216,7 @@ select:disabled {
 .tf-logo-light-text {
   display: none;
   filter: brightness(0) invert(1);
-  clip-path: inset(0 0 0 29%);
+  clip-path: polygon(18% 0, 100% 0, 100% 100%, 10.5% 100%, 10.5% 52%, 14% 52%, 14% 28%, 18% 28%);
 }
 
 :root[data-theme="dark"] .tf-logo-light-text {

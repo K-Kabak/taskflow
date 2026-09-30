@@ -73,7 +73,7 @@ test("MEMBER nie widzi zarządzania projektami ani rolami", async ({ page }) => 
   await expect(page.getByRole("heading", { name: "Nowy projekt" })).toHaveCount(0);
   await page.goto("/w/seed_workspace_studio/team");
   await expect(page.getByRole("button", { name: "Generuj link" })).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Zmień" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Zmień", exact: true })).toHaveCount(0);
 });
 
 test("archiwizacja w innej sesji blokuje zapis już otwartego zadania", async ({ page }) => {

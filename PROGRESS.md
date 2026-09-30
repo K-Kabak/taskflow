@@ -11,6 +11,7 @@
 - Jednostka 5: AppShell, header, sidebar, menu mobilne, wyszukiwanie i wspólne komunikaty formularzy używają kolorów motywu; rozmiar wyszukiwarki może się zmniejszać na mobile. `pnpm lint` i `pnpm typecheck` OK.
 - Jednostka 6: dashboard, metryki, projekty, lista zadań, Kanban, panel zadania, checklista i filtry przeniesione na semantyczne kolory. Pozostałe `text-white` w tej grupie dotyczą inicjałów na kolorowych avatarach; kontrast będzie oceniony podczas visual QA. `pnpm lint` i `pnpm typecheck` OK.
 - Jednostka 7: kalendarz, Moje zadania, powiadomienia, zespół, ustawienia i skeletony przeniesione na tokeny. Ponowne wyszukiwanie wskazuje tylko celowe stałe barwy dekoracyjnych kół na landing page, domyślny kolor danych avatara/etykiety oraz samodzielną paletę ekranu `global-error`; `text-white` pozostało przy dynamicznie kolorowanych avatarach. `pnpm lint` i `pnpm typecheck` OK.
+- Jednostka 8: testy preferencji, obsługi klawiatury, synchronizacji kart i kluczowych widoków; 18 rzeczywistych zrzutów Light/Dark w `docs/screenshots/v1.2/`. Kontrast inicjałów avatara dobierany z koloru tła; logo jest czytelne w obu motywach. `pnpm lint`, `pnpm typecheck`, 31 testów jednostkowych i `pnpm build` OK. Playwright motywu: 9 zaliczonych, 1 pominięty wariant zrzutów. Pierwsza pełna regresja: 72 zaliczone, 10 pominiętych, 2 niepowodzenia starszego testu uprawnień przez nowy przycisk „Zmień motyw”; selektor testu uściślono, a celowane 23 testy security/theme przeszły (1 pominięty). Pełną bramkę trzeba ponowić po dokumentacji.
 
 ## Archiwum v1.1
 

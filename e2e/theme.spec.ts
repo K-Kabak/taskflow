@@ -1,0 +1,102 @@
+import { expect, test } from "./fixtures";
+
+const theme = (page: import("@playwright/test").Page) => page.locator("html");
+const background = (page: import("@playwright/test").Page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+
+test("preferencja Dark jest stosowana podczas ładowania dokumentu", async ({ page }) => {
+  const response = await page.request.get("/login");
+  const html = await response.text();
+  expect(html.indexOf("taskflow-theme")).toBeGreaterThan(0);
+  expect(html.indexOf("taskflow-theme")).toBeLessThan(html.indexOf("<body"));
+  await page.addInitScript(() => localStorage.setItem("taskflow-theme", "dark"));
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).colorScheme)).toBe("dark");
+});
+
+test("Systemowy reaguje na ustawienie systemu, a ręczny wybór ma pierwszeństwo", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/login");
+  await expect(theme(page)).toHaveAttribute("data-theme", "system");
+  const light = await background(page);
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect.poll(() => background(page)).not.toBe(light);
+  const dark = await background(page);
+
+  await page.getByRole("button", { name: "Zmień motyw" }).click();
+  await page.getByRole("radio", { name: "Jasny" }).click();
+  await expect(theme(page)).toHaveAttribute("data-theme", "light");
+  expect(await background(page)).toBe(light);
+  await page.reload();
+  await expect(theme(page)).toHaveAttribute("data-theme", "light");
+  expect(await background(page)).toBe(light);
+
+  await page.getByRole("button", { name: "Zmień motyw" }).click();
+  await page.getByRole("radio", { name: "Ciemny" }).click();
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+  expect(await background(page)).toBe(dark);
+  await page.reload();
+  expect(await background(page)).toBe(dark);
+
+  await page.getByRole("button", { name: "Zmień motyw" }).click();
+  await page.getByRole("radio", { name: "Systemowy" }).click();
+  await expect(theme(page)).toHaveAttribute("data-theme", "system");
+  expect(await background(page)).toBe(dark);
+});
+
+test("nieprawidłowy zapis wraca do Systemowego; panel obsługuje Escape, fokus i kliknięcie poza nim", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("taskflow-theme", "nieznany"));
+  await page.goto("/register");
+  await expect(theme(page)).toHaveAttribute("data-theme", "system");
+  const button = page.getByRole("button", { name: "Zmień motyw" });
+  await button.click();
+  const dialog = page.getByRole("dialog", { name: "Wybierz motyw" });
+  await expect(dialog.getByRole("radio", { name: "Systemowy" })).toBeChecked();
+  await expect(dialog.getByRole("radio", { name: "Systemowy" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(button).toBeFocused();
+  await button.click();
+  await page.locator("body").click({ position: { x: 5, y: 5 } });
+  await expect(dialog).toHaveCount(0);
+  await button.focus();
+  await page.keyboard.press("Enter");
+  await expect(dialog.getByRole("radio", { name: "Systemowy" })).toBeFocused();
+  await page.keyboard.press("ArrowUp");
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+  await expect(button).toBeFocused();
+});
+
+test("motyw jest wspólny dla kart i trwa po logowaniu na kluczowych widokach", async ({ page, context }) => {
+  await page.goto("/login");
+  const other = await context.newPage();
+  await other.goto("/login");
+  await page.getByRole("button", { name: "Zmień motyw" }).click();
+  await page.getByRole("radio", { name: "Ciemny" }).click();
+  await expect(theme(other)).toHaveAttribute("data-theme", "dark");
+
+  await page.getByLabel("E-mail").fill("anna@taskflow.demo");
+  await page.getByLabel("Hasło", { exact: true }).fill("TaskFlowDemo123!");
+  await page.getByRole("button", { name: "Zaloguj się" }).click();
+  await expect(page).toHaveURL(/\/dashboard/, { timeout: 20_000 });
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+  for (const path of ["dashboard", "projects/seed_project_redesign", "notifications"]) {
+    await page.goto(`/w/seed_workspace_studio/${path}`);
+    await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+    await expect(page.locator("main").first()).toBeVisible();
+  }
+  await page.goto("/w/seed_workspace_studio/projects/seed_project_redesign?task=seed_task_01");
+  await expect(page.getByRole("dialog", { name: "Szczegóły zadania" })).toBeVisible();
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+});
+
+test("przełącznik i panel mieszczą się na telefonie", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== "mobile", "Kontrola układu mobilnego.");
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Zmień motyw" }).click();
+  await expect(page.getByRole("dialog", { name: "Wybierz motyw" })).toBeInViewport();
+  await page.getByRole("radio", { name: "Ciemny" }).click();
+  await expect(theme(page)).toHaveAttribute("data-theme", "dark");
+  const width = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(width).toBeLessThanOrEqual(1);
+});
