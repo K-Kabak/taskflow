@@ -6,6 +6,7 @@
 - Zakres: motywy Jasny, Ciemny, Systemowy (domyślny) oraz wyłącznie poprawki UX potrzebne do ich działania. Bez zmian schematu bazy i backendu. Tag/release `v1.2.0` wymagają osobnej zgody.
 - Jednostka 1: typ i walidacja preferencji oraz skrypt w `<head>` ustawiający `data-theme` przed hydration. `pnpm typecheck` OK. Kolejno: tokeny, przełącznik, pokrycie widoków, testy, screenshoty i dokumentacja.
 - Jednostka 2: rozszerzenie istniejących tokenów o semantyczne powierzchnie, teksty, stany i paletę ciemną; Systemowy używa `prefers-color-scheme`, a `color-scheme` obejmuje kontrolki natywne.
+- Jednostka 3: wspólna kontrolka wyboru motywu na landing, auth i w nagłówku aplikacji; zapis lokalny, synchronizacja między kartami, obsługa Escape i kliknięcia poza panelem. `pnpm lint` i `pnpm typecheck` OK. Pokrycie kolorów widoków jest kolejną jednostką.
 
 ## Archiwum v1.1
 

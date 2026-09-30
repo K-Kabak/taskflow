@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { BrandLogo } from "@/components/shared/brand-logo";
+import { ThemeSwitcher } from "@/components/shared/theme-switcher";
 
 export default async function HomePage() {
   const session = await getCurrentSession();
@@ -18,6 +19,7 @@ export default async function HomePage() {
           <BrandLogo />
         </Link>
         <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           <Link href="/login" className="rounded-xl px-4 py-2 text-sm font-medium hover:bg-white">Zaloguj się</Link>
           <Link href="/register" className="rounded-xl bg-[#252525] px-4 py-2 text-sm font-medium text-white hover:bg-black">Utwórz konto</Link>
         </div>
