@@ -63,19 +63,19 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         <Field label="E-mail" name="email" type="email" autoComplete="email" disabled={pending} />
         <Field label="Hasło" name="password" type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} minLength={mode === "register" ? 10 : undefined} disabled={pending} />
         {mode === "register" && <Field label="Powtórz hasło" name="confirmPassword" type="password" autoComplete="new-password" minLength={10} disabled={pending} />}
-        {error && <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-        <button type="submit" disabled={pending} className="flex w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 py-3 font-semibold text-white transition hover:bg-orange-600 disabled:cursor-wait disabled:opacity-80">
+        {error && <p role="alert" className="rounded-xl bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">{error}</p>}
+        <button type="submit" disabled={pending} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-3 font-semibold text-[var(--on-accent)] transition hover:bg-[var(--accent-hover)] disabled:cursor-wait disabled:opacity-80">
           {pending && <Loader2 size={18} aria-hidden="true" className="animate-spin" />}
           {buttonLabel}
         </button>
       </form>
-      {pending && <p role="status" aria-live="polite" className="mt-3 text-center text-sm text-[#777772]">To może potrwać kilka sekund.</p>}
-      <p className="mt-5 text-center text-sm text-[#777772]">{mode === "login" ? "Nie masz konta?" : "Masz już konto?"} <Link className="font-semibold text-orange-600 hover:underline" href={mode === "login" ? "/register" : "/login"}>{mode === "login" ? "Utwórz je" : "Zaloguj się"}</Link></p>
+      {pending && <p role="status" aria-live="polite" className="mt-3 text-center text-sm text-[var(--muted)]">To może potrwać kilka sekund.</p>}
+      <p className="mt-5 text-center text-sm text-[var(--muted)]">{mode === "login" ? "Nie masz konta?" : "Masz już konto?"} <Link className="font-semibold text-[var(--accent-ink)] hover:underline" href={mode === "login" ? "/register" : "/login"}>{mode === "login" ? "Utwórz je" : "Zaloguj się"}</Link></p>
     </div>
   );
 }
 
 function Field(props: React.InputHTMLAttributes<HTMLInputElement> & { label: string; name: string }) {
   const { label, ...inputProps } = props;
-  return <label className="block text-sm font-medium"><span className="mb-2 block">{label}</span><input required {...inputProps} className="w-full rounded-xl border border-[#deded9] bg-white px-4 py-3 outline-none transition focus:border-orange-400 focus:ring-4 focus:ring-orange-100" /></label>;
+  return <label className="block text-sm font-medium"><span className="mb-2 block">{label}</span><input required {...inputProps} className="w-full rounded-xl border border-[var(--border-strong)] bg-[var(--input)] px-4 py-3 outline-none transition focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent-soft)]" /></label>;
 }

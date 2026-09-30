@@ -25,6 +25,7 @@
   --warning-soft: #fff7d6;
   --info: #1e40af;
   --info-soft: #eff6ff;
+  --promo-violet-soft: #f5f3ff;
   --input: #ffffff;
   --disabled: #f0f0ec;
   --hover: #f1f1ed;
@@ -63,6 +64,7 @@
   --warning-soft: #3a2d16;
   --info: #93c5fd;
   --info-soft: #1b2b40;
+  --promo-violet-soft: #29243a;
   --input: #24282d;
   --disabled: #25282c;
   --hover: #292e33;
@@ -99,6 +101,7 @@
     --warning-soft: #3a2d16;
     --info: #93c5fd;
     --info-soft: #1b2b40;
+    --promo-violet-soft: #29243a;
     --input: #24282d;
     --disabled: #25282c;
     --hover: #292e33;
@@ -213,6 +216,22 @@ select:disabled {
 
 .tf-text-link:hover {
   text-decoration-line: underline;
+}
+
+.tf-logo-light-text {
+  display: none;
+  filter: brightness(0) invert(1);
+  clip-path: inset(0 0 0 29%);
+}
+
+:root[data-theme="dark"] .tf-logo-light-text {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] .tf-logo-light-text {
+    display: block;
+  }
 }
 
 ::selection {
