@@ -1,4 +1,12 @@
-# TaskFlow v1.1 — postęp
+# TaskFlow v1.2 — postęp
+
+## v1.2.0 — system motywów
+
+- Punkt startowy: czysty `main` / `origin/main` na `a5512dd71a837a6d455d3e07fadc44f2641bda89`. Tag `v1.1.0` pozostaje na `807a75ab5b372e4de92023ab29ab69d5101febd9`.
+- Zakres: motywy Jasny, Ciemny, Systemowy (domyślny) oraz wyłącznie poprawki UX potrzebne do ich działania. Bez zmian schematu bazy i backendu. Tag/release `v1.2.0` wymagają osobnej zgody.
+- Jednostka 1: typ i walidacja preferencji oraz skrypt w `<head>` ustawiający `data-theme` przed hydration. `pnpm typecheck` OK. Kolejno: tokeny, przełącznik, pokrycie widoków, testy, screenshoty i dokumentacja.
+
+## Archiwum v1.1
 
 ## Stan końcowy v1.1 i przekazanie do nowej sesji
 
