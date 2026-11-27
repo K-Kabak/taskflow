@@ -57,7 +57,7 @@ export function ThemeSwitcher() {
   }
 
   return <div ref={root} className="relative shrink-0">
-    <button ref={trigger} type="button" aria-label="Zmień motyw" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(!open)} className="grid min-h-11 min-w-11 place-items-center rounded-xl text-[var(--muted)] hover:bg-[var(--hover)] hover:text-[var(--foreground)]">
+    <button ref={trigger} type="button" aria-label="Zmień motyw" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(!open)} className="tf-icon-button">
       <SunMoon size={19} aria-hidden="true" />
     </button>
     {open && <div role="dialog" aria-label="Wybierz motyw" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); setOpen(false); trigger.current?.focus(); } }} className="absolute top-full right-0 z-50 mt-2 w-48 rounded-xl border border-[var(--border)] bg-[var(--elevated-surface)] p-2 text-[var(--foreground)] shadow-xl">

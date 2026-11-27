@@ -28,6 +28,9 @@ test("statystyki są liczone tylko z bieżącej przestrzeni i obsługują zero d
     await page.goto(`/w/${workspaceId}/projects/${projectId}`);
     const projectStats = page.getByRole("region", { name: "Postęp projektu" });
     await expect(projectStats).toContainText("Ukończone: 1 z 2 zadań");
+    await expect(projectStats.getByRole("progressbar")).toBeHidden();
+    await projectStats.locator("summary").click();
+    await expect(projectStats.getByRole("progressbar")).toHaveAttribute("aria-valuetext", "50% ukończonych");
     await expect(projectStats).toContainText("Po terminie1");
   } finally {
     await db.workspace.deleteMany({ where: { id: workspaceId } });
